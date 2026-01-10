@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -17,6 +20,25 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+
+  public static final Transform2d[] leftReef =
+      new Transform2d[] {
+        new Transform2d(0.6, -0.185, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(0.5, -0.21, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(0.4, -0.185, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(0.45, -0.19, Rotation2d.fromDegrees(180.0))
+      };
+  public static final Transform2d[] rightReef =
+      new Transform2d[] {
+        new Transform2d(0.6, 0.165, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(0.5, 0.155, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(0.4, 0.165, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(0.45, 0.16, Rotation2d.fromDegrees(180.0))
+      };
+
+  public static final PIDController xController = new PIDController(4, 0, 0);
+  public static final PIDController yController = new PIDController(4, 0, 0);
+  public static final PIDController thetaController = new PIDController(7, 0, 0);
 
   public static enum Mode {
     /** Running on a real robot. */
