@@ -7,25 +7,23 @@
 
 package frc.robot.subsystems.drive;
 
-import static frc.robot.subsystems.drive.DriveConstants.*;
+import static frc.robot.subsystems.drive.constants.DriveConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,14 +34,15 @@ import java.util.function.DoubleSupplier;
  * Module IO implementation for Spark Flex drive motor controller, Spark Max turn motor controller,
  * and duty cycle absolute encoder.
  */
-public class ModuleIOSpark implements ModuleIO {
+public class ModuleIOSparkFlex implements ModuleIO {
   private final Rotation2d zeroRotation;
 
   // Hardware objects
   private final SparkBase driveSpark;
   private final SparkBase turnSpark;
   private final RelativeEncoder driveEncoder;
-  private final AbsoluteEncoder turnEncoder;
+  private final RelativeEncoder turnEncoder;
+  private final AbsoluteEncoder absTurnEncoder;
 
   // Closed loop controllers
   private final SparkClosedLoopController driveController;
@@ -60,7 +59,7 @@ public class ModuleIOSpark implements ModuleIO {
   private final Debouncer turnConnectedDebounce =
       new Debouncer(0.5, Debouncer.DebounceType.kFalling);
 
-  public ModuleIOSpark(int module) {
+  public ModuleIOSparkFlex(int module) {
     zeroRotation =
         switch (module) {
           case 0 -> frontLeftZeroRotation;
@@ -80,7 +79,7 @@ public class ModuleIOSpark implements ModuleIO {
             },
             MotorType.kBrushless);
     turnSpark =
-        new SparkMax(
+        new SparkFlex(
             switch (module) {
               case 0 -> frontLeftTurnCanId;
               case 1 -> frontRightTurnCanId;
@@ -90,14 +89,16 @@ public class ModuleIOSpark implements ModuleIO {
             },
             MotorType.kBrushless);
     driveEncoder = driveSpark.getEncoder();
-    turnEncoder = turnSpark.getAbsoluteEncoder();
+    turnEncoder = turnSpark.getEncoder();
+    absTurnEncoder = turnSpark.getAbsoluteEncoder();
     driveController = driveSpark.getClosedLoopController();
     turnController = turnSpark.getClosedLoopController();
 
     // Configure drive motor
-    var driveConfig = new SparkFlexConfig();
+    SparkFlexConfig driveConfig = new SparkFlexConfig();
     driveConfig
         .idleMode(IdleMode.kBrake)
+        .inverted(driveInverted)
         .smartCurrentLimit(driveMotorCurrentLimit)
         .voltageCompensation(12.0);
     driveConfig
@@ -109,7 +110,11 @@ public class ModuleIOSpark implements ModuleIO {
     driveConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(driveKp, 0.0, driveKd);
+        .pid(driveKp, 0.0, driveKd)
+        .maxMotion
+        .maxVelocity(maxSpeedMetersPerSec)
+        .maxAcceleration(maxAcceleration)
+        .allowedClosedLoopError(allowedError);
     driveConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -128,17 +133,23 @@ public class ModuleIOSpark implements ModuleIO {
     tryUntilOk(driveSpark, 5, () -> driveEncoder.setPosition(0.0));
 
     // Configure turn motor
-    var turnConfig = new SparkMaxConfig();
+    SparkFlexConfig turnConfig = new SparkFlexConfig();
     turnConfig
         .inverted(turnInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(turnMotorCurrentLimit)
         .voltageCompensation(12.0);
     turnConfig
-        .absoluteEncoder
-        .inverted(turnEncoderInverted)
+        .encoder
         .positionConversionFactor(turnEncoderPositionFactor)
         .velocityConversionFactor(turnEncoderVelocityFactor)
+        .uvwMeasurementPeriod(10)
+        .uvwAverageDepth(2);
+    turnConfig
+        .absoluteEncoder
+        .inverted(turnEncoderInverted)
+        .positionConversionFactor(absoluteTurnEncoderPositionFactor)
+        .velocityConversionFactor(absoluteTurnEncoderVelocityFactor)
         .averageDepth(2);
     turnConfig
         .closedLoop
@@ -154,13 +165,18 @@ public class ModuleIOSpark implements ModuleIO {
         .absoluteEncoderVelocityPeriodMs(20)
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
-        .outputCurrentPeriodMs(20);
+        .outputCurrentPeriodMs(20)
+        .primaryEncoderPositionAlwaysOn(true)
+        .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+        .primaryEncoderVelocityAlwaysOn(true)
+        .primaryEncoderVelocityPeriodMs(20);
     tryUntilOk(
         turnSpark,
         5,
         () ->
             turnSpark.configure(
                 turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    tryUntilOk(turnSpark, 5, () -> turnEncoder.setPosition(absTurnEncoder.getPosition()));
 
     // Create odometry queues
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
@@ -226,7 +242,7 @@ public class ModuleIOSpark implements ModuleIO {
     double ffVolts = driveKs * Math.signum(velocityRadPerSec) + driveKv * velocityRadPerSec;
     driveController.setSetpoint(
         velocityRadPerSec,
-        ControlType.kVelocity,
+        ControlType.kMAXMotionVelocityControl,
         ClosedLoopSlot.kSlot0,
         ffVolts,
         ArbFFUnits.kVoltage);

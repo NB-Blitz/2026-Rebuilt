@@ -19,9 +19,11 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -29,6 +31,7 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private int startingIndex = 0;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -58,6 +61,41 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
+  /**
+   * Returns the tag poses on the reef in view.
+   *
+   * @param cameraIndex The index of the camera to use. -1 for all cameras.
+   */
+  public List<Pose2d> getReefTags(int cameraIndex) {
+    List<Pose2d> tags = new LinkedList<>();
+    // Add tag poses
+    if (cameraIndex == -1) { // If all cameras are requested
+      for (int i = 0; i < io.length; i++) {
+        tags.addAll(getReefTags(i));
+      }
+      return tags;
+    }
+
+    for (int tagId : inputs[cameraIndex].tagIds) {
+      if ((tagId <= 22 && tagId >= 17) || (tagId <= 11 && tagId >= 6)) { // Only add
+        Optional<Pose3d> tagPose = aprilTagLayout.getTagPose(tagId);
+        if (tagPose.isPresent()) {
+          tags.add(tagPose.get().toPose2d());
+        }
+      }
+    }
+
+    return tags;
+  }
+
+  public void disableFrontCameraOdometery() {
+    startingIndex = 1;
+  }
+
+  public void enableFrontCameraOdometery() {
+    startingIndex = 0;
+  }
+
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
@@ -72,7 +110,7 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
     // Loop over cameras
-    for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+    for (int cameraIndex = startingIndex; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
 
@@ -84,14 +122,14 @@ public class Vision extends SubsystemBase {
 
       // Add tag poses
       for (int tagId : inputs[cameraIndex].tagIds) {
-        var tagPose = aprilTagLayout.getTagPose(tagId);
+        Optional<Pose3d> tagPose = aprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tagPoses.add(tagPose.get());
         }
       }
 
       // Loop over pose observations
-      for (var observation : inputs[cameraIndex].poseObservations) {
+      for (PoseObservation observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
