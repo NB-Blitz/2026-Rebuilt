@@ -8,7 +8,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,11 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ManipulatorCommands;
 import frc.robot.commands.ReefAlign;
-import frc.robot.commands.auto.ExpelCoral;
-import frc.robot.commands.auto.GoToPreset;
-import frc.robot.commands.auto.IntakeCoral;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -32,7 +27,8 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.drive.constants.DriveConstants;
-import frc.robot.subsystems.manipulator.Manipulator;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.SuperstructureIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -52,10 +48,12 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Manipulator manipulator;
 
   // Constant to switch between the practice SDS base and the competition Flex base
   private final boolean useSecondController = true;
+
+  private final boolean useManipulator = false;
+  private final Superstructure manipulator;
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
@@ -73,7 +71,12 @@ public class RobotContainer {
     } else {
       xBoxController = null;
     }
-    manipulator = new Manipulator(ledStrip);
+
+    if(useManipulator){
+      manipulator = new Superstructure(new SuperstructureIOSpark());
+    } else {
+      manipulator = null;
+    }
 
     switch (Constants.currentMode) {
       case REAL:
@@ -141,14 +144,6 @@ public class RobotContainer {
     demoModeToggle.onTrue(Commands.runOnce(() -> drive.demoMode = true, drive));
     demoModeToggle.onFalse(Commands.runOnce(() -> drive.demoMode = false, drive));
 
-    NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(manipulator));
-    NamedCommands.registerCommand("ExpelCoral", new ExpelCoral(manipulator));
-    NamedCommands.registerCommand(
-        "StopHand", Commands.runOnce(() -> manipulator.stopHand(), manipulator));
-    NamedCommands.registerCommand("GoToL1", new GoToPreset(manipulator, 2));
-    NamedCommands.registerCommand("GoToCoralStation", new GoToPreset(manipulator, 1));
-    NamedCommands.registerCommand("GoToL2", new GoToPreset(manipulator, 3));
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -212,59 +207,6 @@ public class RobotContainer {
         .button(5)
         .whileTrue(
             new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[1]));
-
-    if (useSecondController) {
-      manipulator.setDefaultCommand(
-          ManipulatorCommands.joystickManipulator(
-              manipulator,
-              () -> -xBoxController.getLeftTriggerAxis(),
-              () -> xBoxController.getRightTriggerAxis(),
-              () -> -xBoxController.getLeftY(),
-              () -> -xBoxController.getRightY()));
-      xBoxController
-          .povUp()
-          .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
-      xBoxController
-          .povDown()
-          .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
-      xBoxController
-          .leftBumper()
-          .whileTrue(Commands.run(() -> manipulator.expelCoralIntakeAlgae(), manipulator))
-          .onFalse(Commands.runOnce(() -> manipulator.stopExpelCoral(), manipulator));
-      xBoxController
-          .rightBumper()
-          .whileTrue(Commands.run(() -> manipulator.intakeCoralExpelAlgae(), manipulator))
-          .onFalse(Commands.runOnce(() -> manipulator.stopIntakeCoral(), manipulator));
-      xBoxController
-          .leftStick()
-          .onTrue(
-              Commands.run(
-                  () -> {
-                    if (xBoxController.rightStick().getAsBoolean()) {
-                      manipulator.emergencyStop();
-                    }
-                  },
-                  manipulator));
-      driverStation // Rainbow LEDs
-          .button(1)
-          .onTrue(
-              Commands.runOnce(
-                  () -> {
-                    ledStrip.setRainbowOverride(true);
-                  },
-                  manipulator))
-          .onFalse(Commands.runOnce(() -> ledStrip.setRainbowOverride(false), manipulator));
-      driverStation // Intake Preset
-          .button(5)
-          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(1), manipulator));
-      driverStation // L4 Preset
-          .button(6)
-          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(5), manipulator));
-    }
-  }
-
-  public void resetManipulatorTargets() {
-    manipulator.resetTargets();
   }
 
   /**

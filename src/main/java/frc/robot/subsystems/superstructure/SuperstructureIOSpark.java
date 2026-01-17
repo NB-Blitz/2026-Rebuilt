@@ -14,24 +14,24 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
 
 /**
  * This superstructure implementation is for Spark devices. It defaults to brushless control, but
  * can be easily adapted for a brushed motor. One or more Spark Flexes can be used by swapping
- * relevant instances of "SparkMax" with "SparkFlex".
+ * relevant instances of "SparkFlex" with "SparkFlex".
  */
 public class SuperstructureIOSpark implements SuperstructureIO {
-  private final SparkMax feeder = new SparkMax(feederCanId, MotorType.kBrushless);
-  private final SparkMax intakeLauncher = new SparkMax(intakeLauncherCanId, MotorType.kBrushless);
+  private final SparkFlex feeder = new SparkFlex(feederCanId, MotorType.kBrushless);
+  private final SparkFlex intakeLauncher = new SparkFlex(intakeLauncherCanId, MotorType.kBrushless);
   private final RelativeEncoder feederEncoder = feeder.getEncoder();
   private final RelativeEncoder intakeLauncherEncoder = intakeLauncher.getEncoder();
 
   public SuperstructureIOSpark() {
-    var feederConfig = new SparkMaxConfig();
+    var feederConfig = new SparkFlexConfig();
     feederConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(feederCurrentLimit)
@@ -50,7 +50,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             feeder.configure(
                 feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    var intakeLauncherConfig = new SparkMaxConfig();
+    var intakeLauncherConfig = new SparkFlexConfig();
     intakeLauncherConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(intakeLauncherCurrentLimit)
