@@ -50,7 +50,7 @@ public class RobotContainer {
   private final Vision vision;
 
   // Constant to switch between the practice SDS base and the competition Flex base
-  private final boolean useSecondController = true;
+  private final boolean useSecondController = false;
   private final boolean useXboxControllerDrive = true;
 
   private final boolean useManipulator = false;
