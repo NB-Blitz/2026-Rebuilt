@@ -56,10 +56,12 @@ public class RobotContainer {
 
   // Constant to switch between the practice SDS base and the competition Flex base
   private final boolean useSecondController = true;
+  private final boolean useXboxControllerDrive = true;
 
   // Controllers
-  private final CommandJoystick joystick = new CommandJoystick(0);
+  private final CommandJoystick joystick;
   private final CommandXboxController xBoxController;
+  private final CommandXboxController driveXboxController;
   private final CommandGenericHID driverStation = new CommandGenericHID(2);
 
   private final LEDStrip ledStrip = new LEDStrip(9, 58);
@@ -74,7 +76,13 @@ public class RobotContainer {
       xBoxController = null;
     }
     manipulator = new Manipulator(ledStrip);
-
+    if (useXboxControllerDrive) {
+      driveXboxController = new CommandXboxController(0);
+      joystick = null;
+    } else {
+      joystick = new CommandJoystick(0);
+      driveXboxController = null;
+    }
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -180,38 +188,74 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default Commands, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -1 * joystick.getY(),
-            () -> -1 * joystick.getX(),
-            () -> -1 * joystick.getZ(),
-            () -> 0.5 * (1 + -joystick.getRawAxis(3))));
+    if (useXboxControllerDrive) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -1 * driveXboxController.getLeftY(),
+              () -> -1 * driveXboxController.getLeftX(),
+              () -> -1 * driveXboxController.getRightX(),
+              () -> 0.1)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
+      // Lock to 0° when A button is held
+      // joystick
+      //     .button(11)
+      //     .whileTrue(
+      //         DriveCommands.joystickDriveAtAngle(
+      //             drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new
+      // Rotation2d()));
 
-    // Lock to 0° when A button is held
-    // joystick
-    //     .button(11)
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new Rotation2d()));
+      // Switch to X pattern when X button is pressed
+      driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Switch to X pattern when X button is pressed
-    joystick.button(4).onTrue(Commands.runOnce(drive::stopWithX, drive));
+      // Reset gyro to 0° when B button is pressed
+      driveXboxController
+          .povDown()
+          .onTrue(Commands.runOnce(() -> drive.resetGyro(), drive).ignoringDisable(true));
 
-    // Reset gyro to 0° when B button is pressed
-    joystick
-        .button(7)
-        .onTrue(Commands.runOnce(() -> drive.resetGyro(), drive).ignoringDisable(true));
+      // Align to reef positions
+      driveXboxController
+          .rightBumper()
+          .whileTrue(
+              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[1]));
+      driveXboxController
+          .leftBumper()
+          .whileTrue(
+              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[1]));
 
-    // Align to reef positions
-    joystick
-        .button(6)
-        .whileTrue(
-            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[1]));
-    joystick
-        .button(5)
-        .whileTrue(
-            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[1]));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -1 * joystick.getY(),
+              () -> -1 * joystick.getX(),
+              () -> -1 * joystick.getZ(),
+              () -> 0.5 * (1 + -joystick.getRawAxis(3))));
+      // Lock to 0° when A button is held
+      // joystick
+      //     .button(11)
+      //     .whileTrue(
+      //         DriveCommands.joystickDriveAtAngle(
+      //             drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new
+      // Rotation2d()));
+
+      // Switch to X pattern when X button is pressed
+      joystick.button(4).onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+      // Reset gyro to 0° when B button is pressed
+      joystick
+          .button(7)
+          .onTrue(Commands.runOnce(() -> drive.resetGyro(), drive).ignoringDisable(true));
+
+      // Align to reef positions
+      joystick
+          .button(6)
+          .whileTrue(
+              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[1]));
+      joystick
+          .button(5)
+          .whileTrue(
+              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[1]));
+    }
 
     if (useSecondController) {
       manipulator.setDefaultCommand(
