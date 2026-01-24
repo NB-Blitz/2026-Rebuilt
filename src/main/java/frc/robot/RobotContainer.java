@@ -250,7 +250,7 @@ public class RobotContainer {
           .y()
           .whileTrue(
               new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
-
+      driveXboxController.a().whileTrue(manipulator.intake());
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(

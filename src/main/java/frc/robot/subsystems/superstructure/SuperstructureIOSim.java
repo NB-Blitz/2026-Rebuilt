@@ -7,12 +7,17 @@
 
 package frc.robot.subsystems.superstructure;
 
-import static frc.robot.subsystems.superstructure.SuperstructureConstants.*;
+import static edu.wpi.first.units.Units.Meters;
+import static frc.robot.subsystems.superstructure.SuperstructureConstants.feederMotorReduction;
+import static frc.robot.subsystems.superstructure.SuperstructureConstants.intakeLauncherMotorReduction;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import org.ironmaple.simulation.IntakeSimulation;
+import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 
 public class SuperstructureIOSim implements SuperstructureIO {
   private DCMotorSim feederSim =
@@ -27,6 +32,13 @@ public class SuperstructureIOSim implements SuperstructureIO {
 
   private double feederAppliedVolts = 0.0;
   private double intakeLauncherAppliedVolts = 0.0;
+  private final IntakeSimulation intakeSimulation;
+
+  public SuperstructureIOSim(AbstractDriveTrainSimulation driveTrain) {
+    intakeSimulation =
+        IntakeSimulation.InTheFrameIntake(
+            "Fuel", driveTrain, Meters.of(0.7), IntakeSimulation.IntakeSide.FRONT, 10);
+  }
 
   @Override
   public void updateInputs(SuperstructureIOInputs inputs) {
@@ -54,6 +66,11 @@ public class SuperstructureIOSim implements SuperstructureIO {
 
   @Override
   public void setIntakeLauncherVoltage(double volts) {
+    if (volts < 0) {
+      intakeSimulation.startIntake();
+    } else if (volts == 0) {
+      intakeSimulation.stopIntake();
+    }
     intakeLauncherAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
 }
