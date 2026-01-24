@@ -21,8 +21,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
           DCMotor.getCIM(1));
   private DCMotorSim intakeLauncherSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              DCMotor.getCIM(1), 0.004, intakeLauncherMotorReduction),
+          LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.004, launcherMotorReduction),
           DCMotor.getCIM(1));
 
   private double feederAppliedVolts = 0.0;

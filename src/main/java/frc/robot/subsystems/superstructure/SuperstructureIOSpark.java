@@ -13,15 +13,16 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -31,9 +32,13 @@ import java.util.function.DoubleSupplier;
  */
 public class SuperstructureIOSpark implements SuperstructureIO {
   private final SparkFlex feeder = new SparkFlex(feederCanId, MotorType.kBrushless);
-  private final SparkFlex intakeLauncher = new SparkFlex(intakeLauncherCanId, MotorType.kBrushless);
+  private final SparkFlex launcher = new SparkFlex(launcherCanId, MotorType.kBrushless);
+  private final SparkFlex launcherFollower =
+      new SparkFlex(launcherFollowerCanId, MotorType.kBrushless);
+  private final SparkFlex intakeMotor = new SparkFlex(intakeMotorCanId, MotorType.kBrushless);
   private final RelativeEncoder feederEncoder = feeder.getEncoder();
-  private final RelativeEncoder intakeLauncherEncoder = intakeLauncher.getEncoder();
+  private final RelativeEncoder launcherEncoder = launcher.getEncoder();
+  private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
   private final SparkClosedLoopController manipulatorController;
 
   public SuperstructureIOSpark() {
@@ -49,10 +54,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / feederMotorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-    feederConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.1, 0, 0);
+    feederConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0.1, 0, 0);
     tryUntilOk(
         feeder,
         5,
@@ -60,29 +62,71 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             feeder.configure(
                 feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    var intakeLauncherConfig = new SparkFlexConfig();
-    intakeLauncherConfig
+    var launcherConfig = new SparkFlexConfig();
+    launcherConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(intakeLauncherCurrentLimit)
+        .smartCurrentLimit(launcherCurrentLimit)
         .inverted(true)
         .voltageCompensation(12.0);
-    intakeLauncherConfig
+    launcherConfig
         .encoder
         .positionConversionFactor(
-            2.0 * Math.PI / intakeLauncherMotorReduction) // Rotor Rotations -> Roller Radians
-        .velocityConversionFactor((2.0 * Math.PI) / 60.0 / intakeLauncherMotorReduction)
+            2.0 * Math.PI / launcherMotorReduction) // Rotor Rotations -> Roller Radians
+        .velocityConversionFactor((2.0 * Math.PI) / 60.0 / launcherMotorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
     tryUntilOk(
-        intakeLauncher,
+        launcher,
         5,
         () ->
-            intakeLauncher.configure(
-                intakeLauncherConfig,
-                ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters));
+            launcher.configure(
+                launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    manipulatorController = intakeLauncher.getClosedLoopController();
+    manipulatorController = launcher.getClosedLoopController();
+
+    var intakeConfig = new SparkFlexConfig();
+    intakeConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(intakeCurrentLimit)
+        .inverted(true)
+        .voltageCompensation(12.0);
+    intakeConfig
+        .encoder
+        .positionConversionFactor(
+            2.0 * Math.PI / intakeMotorReduction) // Rotor Rotations -> Roller Radians
+        .velocityConversionFactor((2.0 * Math.PI) / 60.0 / intakeMotorReduction)
+        .uvwMeasurementPeriod(10)
+        .uvwAverageDepth(2);
+    tryUntilOk(
+        intakeMotor,
+        5,
+        () ->
+            intakeMotor.configure(
+                intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    Timer.delay(0.1); // FIXME: idk if this is necessary
+
+    // set up Spark Flex configuration for the left motor
+    // (not sure what everything is set to but I think it works)
+    SparkFlexConfig followMotorConfig = new SparkFlexConfig();
+    followMotorConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(launcherCurrentLimit)
+        .voltageCompensation(12.0);
+    followMotorConfig
+        .signals
+        .appliedOutputPeriodMs(20)
+        .busVoltagePeriodMs(20)
+        .outputCurrentPeriodMs(20);
+    followMotorConfig.follow(launcherCanId, true);
+
+    // sets the configuration of the left motor
+    tryUntilOk(
+        launcherFollower,
+        5,
+        () ->
+            launcherFollower.configure(
+                followMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
@@ -96,24 +140,21 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     ifOk(feeder, feeder::getOutputCurrent, (value) -> inputs.feederCurrentAmps = value);
 
     ifOk(
-        intakeLauncher,
-        intakeLauncherEncoder::getPosition,
+        launcher,
+        launcherEncoder::getPosition,
         (value) -> inputs.intakeLauncherPositionRad = value);
     ifOk(
-        intakeLauncher,
-        intakeLauncherEncoder::getVelocity,
+        launcher,
+        launcherEncoder::getVelocity,
         (value) -> inputs.intakeLauncherVelocityRadPerSec = value);
     ifOk(
-        intakeLauncher,
-        new DoubleSupplier[] {intakeLauncher::getAppliedOutput, intakeLauncher::getBusVoltage},
+        launcher,
+        new DoubleSupplier[] {launcher::getAppliedOutput, launcher::getBusVoltage},
         (values) -> inputs.intakeLauncherAppliedVolts = values[0] * values[1]);
-    ifOk(
-        intakeLauncher,
-        intakeLauncher::getOutputCurrent,
-        (value) -> inputs.intakeLauncherCurrentAmps = value);
+    ifOk(launcher, launcher::getOutputCurrent, (value) -> inputs.intakeLauncherCurrentAmps = value);
   }
 
-  public void setDriveVelocity( double velocityRadPerSec){
+  public void setDriveVelocity(double velocityRadPerSec) {
     manipulatorController.setSetpoint(
         velocityRadPerSec,
         ControlType.kMAXMotionVelocityControl,
@@ -121,7 +162,6 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         0,
         ArbFFUnits.kVoltage);
   }
-  
 
   @Override
   public void setFeederVoltage(double volts) {
@@ -130,6 +170,6 @@ public class SuperstructureIOSpark implements SuperstructureIO {
 
   @Override
   public void setIntakeLauncherVoltage(double volts) {
-    intakeLauncher.setVoltage(volts);
+    launcher.setVoltage(volts);
   }
 }
