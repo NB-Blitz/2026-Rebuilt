@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoAlign;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ReefAlign;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -74,7 +74,7 @@ public class RobotContainer {
       xBoxController = null;
     }
 
-    if(useManipulator){
+    if (useManipulator) {
       manipulator = new Superstructure(new SuperstructureIOSpark());
     } else {
       manipulator = null;
@@ -212,11 +212,15 @@ public class RobotContainer {
       driveXboxController
           .rightBumper()
           .whileTrue(
-              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[1]));
+              new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.rightAlign[0]));
       driveXboxController
           .leftBumper()
           .whileTrue(
-              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[1]));
+              new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.leftAlign[0]));
+      driveXboxController
+          .y()
+          .whileTrue(
+              new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
 
     } else {
       drive.setDefaultCommand(
@@ -246,11 +250,17 @@ public class RobotContainer {
       joystick
           .button(6)
           .whileTrue(
-              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[1]));
+              new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.rightAlign[0]));
       joystick
           .button(5)
           .whileTrue(
-              new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[1]));
+              new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.leftAlign[0]));
+      /*
+      joystick
+          .button(8)
+          .whileTrue(
+              new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.centerAlign[0]));
+      */
     }
   }
 
