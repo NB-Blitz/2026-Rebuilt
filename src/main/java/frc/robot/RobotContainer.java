@@ -31,6 +31,7 @@ import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.drive.constants.DriveConstants;
 import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.SuperstructureIOSim;
 import frc.robot.subsystems.superstructure.SuperstructureIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -81,12 +82,6 @@ public class RobotContainer {
       xBoxController = null;
     }
 
-    if (useManipulator) {
-      manipulator = new Superstructure(new SuperstructureIOSpark());
-    } else {
-      manipulator = null;
-    }
-
     if (useXboxControllerDrive) {
       driveXboxController = new CommandXboxController(0);
       joystick = null;
@@ -122,6 +117,11 @@ public class RobotContainer {
                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                 new VisionIOPhotonVision(
                     VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+        if (useManipulator) {
+          manipulator = new Superstructure(new SuperstructureIOSpark());
+        } else {
+          manipulator = null;
+        }
         break;
 
       case SIM:
@@ -151,6 +151,7 @@ public class RobotContainer {
                     VisionConstants.camera1Name,
                     VisionConstants.robotToCamera1,
                     driveSimulation::getSimulatedDriveTrainPose));
+        manipulator = new Superstructure(new SuperstructureIOSim(driveSimulation));
         break;
 
       default:
@@ -166,6 +167,7 @@ public class RobotContainer {
         // Replayed robot, disable IO implementations
         // (Use same number of dummy implementations as the real robot)
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        manipulator = null;
         break;
     }
 

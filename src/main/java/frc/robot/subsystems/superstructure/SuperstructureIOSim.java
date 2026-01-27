@@ -37,7 +37,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
   public SuperstructureIOSim(AbstractDriveTrainSimulation driveTrain) {
     intakeSimulation =
         IntakeSimulation.InTheFrameIntake(
-            "Fuel", driveTrain, Meters.of(0.7), IntakeSimulation.IntakeSide.FRONT, 10);
+            "Fuel", driveTrain, Meters.of(0.397), IntakeSimulation.IntakeSide.FRONT, 10);
   }
 
   @Override

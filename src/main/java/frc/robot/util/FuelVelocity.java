@@ -8,8 +8,8 @@ import edu.wpi.first.math.util.Units;
 
 public class FuelVelocity {
   private final double HUB_HEIGHT = 72.0; // in inches
-  private final double ROBOT_SHOOTER_HEIGHT = 20.0; // in inches FIXME: get right measurement
-  private final double THETA = Units.degreesToRadians(75.0); // FIXME: launch angle
+  private final double ROBOT_SHOOTER_HEIGHT = 18.309; // in inches FIXME: get right measurement
+  private final double THETA = Units.degreesToRadians(68.03); // FIXME: launch angle
   private final double GRAVITY =
       9.80665000; // most accurate numbers FIXME: make it more accurate up to 100 decimals
   private final double HEIGHT = Units.inchesToMeters(HUB_HEIGHT - ROBOT_SHOOTER_HEIGHT);
