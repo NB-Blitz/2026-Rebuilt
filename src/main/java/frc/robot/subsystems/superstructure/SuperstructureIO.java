@@ -27,8 +27,10 @@ public interface SuperstructureIO {
   public default void updateInputs(SuperstructureIOInputs inputs) {}
 
   /** Run the feeder at the specified voltage. */
-  public default void setFeederVoltage(double volts) {}
+  public default void setFeederSpeed(double speed) {}
 
   /** Run the intake and launcher at the specified voltage. */
-  public default void setIntakeLauncherVoltage(double volts) {}
+  public default void setIntakeSpeed(double speed) {}
+
+  public default void setLauncherSpeed(double speed) {}
 }

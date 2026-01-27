@@ -204,6 +204,10 @@ public class RobotContainer {
       // Switch to X pattern when X button is pressed
       driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+      driveXboxController.rightTrigger().whileTrue(manipulator.launch());
+      driveXboxController.leftTrigger().whileTrue(manipulator.intake());
+      driveXboxController.b().whileTrue(manipulator.eject());
+
       // Reset gyro to 0° when B button is pressed
       driveXboxController
           .povDown()

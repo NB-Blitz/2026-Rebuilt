@@ -47,12 +47,20 @@ public class SuperstructureIOSim implements SuperstructureIO {
   }
 
   @Override
-  public void setFeederVoltage(double volts) {
+  public void setFeederSpeed(double speed) {
+    double volts = speed * 12.0;
     feederAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
 
   @Override
-  public void setIntakeLauncherVoltage(double volts) {
+  public void setIntakeSpeed(double speed) {
+    double volts = speed * 12.0;
     intakeLauncherAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+  }
+
+  @Override
+  public void setLauncherSpeed(double speed) {
+    double volts = speed * 12.0;
+    // intakeLauncherAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
 }
