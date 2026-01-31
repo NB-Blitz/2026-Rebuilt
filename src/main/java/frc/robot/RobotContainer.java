@@ -223,9 +223,6 @@ public class RobotContainer {
       //             drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new
       // Rotation2d()));
 
-      // Switch to X pattern when X button is pressed
-      driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
       // Reset gyro / odometry
       final Runnable resetGyro =
           Constants.currentMode == Constants.Mode.SIM
@@ -252,7 +249,14 @@ public class RobotContainer {
           .y()
           .whileTrue(
               new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
-      driveXboxController.a().whileTrue(manipulator.intake());
+
+      // Switch to X pattern when X button is pressed
+      driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+      driveXboxController.rightTrigger().whileTrue(manipulator.launch());
+      driveXboxController.leftTrigger().whileTrue(manipulator.intake());
+      driveXboxController.b().whileTrue(manipulator.eject());
+
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
