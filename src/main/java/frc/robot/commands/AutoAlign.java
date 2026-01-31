@@ -13,7 +13,7 @@ import frc.robot.subsystems.vision.Vision;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ReefAlign extends InstantCommand {
+public class AutoAlign extends InstantCommand {
   private Drive driveRef;
   private Vision visionRef;
   private Supplier<List<Pose2d>> reefTagSupplier;
@@ -32,7 +32,7 @@ public class ReefAlign extends InstantCommand {
 
   private Pose2d cachedTarget = null;
 
-  public ReefAlign(
+  public AutoAlign(
       Drive drive, Vision vision, Supplier<List<Pose2d>> reefTags, Transform2d offsetPose2d) {
     driveRef = drive;
     visionRef = vision;
