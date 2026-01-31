@@ -22,6 +22,11 @@ public class FuelVelocity {
           new Rotation2d(0.0)); // FIXME: plug in the center of the hub here in meters
   public static final Transform2d SHOOTER_POSITION =
       new Transform2d(
+          Units.inchesToMeters(8.299),
+          0.0,
+          new Rotation2d(Math.PI)); // FIXME: get correct x value for the shooter offset
+  public static final Transform2d SHOOTER_POSITION_INV =
+      new Transform2d(
           Units.inchesToMeters(-8.299),
           0.0,
           new Rotation2d(Math.PI)); // FIXME: get correct x value for the shooter offset

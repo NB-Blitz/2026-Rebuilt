@@ -89,7 +89,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
                 driveTrain.getSimulatedDriveTrainPose().getTranslation(),
                 // Specify the translation of the shooter from the robot center (in the shooter’s
                 // reference frame)
-                FuelVelocity.SHOOTER_POSITION.getTranslation(),
+                FuelVelocity.SHOOTER_POSITION_INV.getTranslation(),
                 // Specify the field-relative speed of the chassis, adding it to the initial
                 // velocity of the projectile
                 driveTrain.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
