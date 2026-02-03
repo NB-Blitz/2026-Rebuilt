@@ -83,6 +83,11 @@ public class SuperstructureIOSim implements SuperstructureIO {
       intakeSimulation.stopIntake();
     } else {
       if (intakeSimulation.obtainGamePieceFromIntake()) {
+
+        double launchVelocity =
+            FuelVelocity.calcFixedLaunchVelocity(driveTrain.getSimulatedDriveTrainPose());
+        double maxVelocity = FuelVelocity.calculateMaxVelocty(FuelVelocity.MAX_HEIGHT);
+
         RebuiltFuelOnFly fuelOnFly =
             new RebuiltFuelOnFly(
                 // Specify the position of the chassis when the note is launched
@@ -104,7 +109,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
                 // 6000 RPM
                 LinearVelocity.ofBaseUnits(
                     // 8,
-                    FuelVelocity.calcFixedLaunchVelocity(driveTrain.getSimulatedDriveTrainPose()),
+                    launchVelocity > maxVelocity ? maxVelocity : launchVelocity,
                     Units.MetersPerSecond),
                 // The angle at which the note is launched
                 Angle.ofBaseUnits(FuelVelocity.THETA, Units.Radians));
