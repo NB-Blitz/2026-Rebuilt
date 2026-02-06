@@ -33,8 +33,6 @@ import frc.robot.subsystems.superstructure.SuperstructureIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.LEDStrip;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -54,7 +52,7 @@ public class RobotContainer {
   private final boolean useSecondController = false;
   private final boolean useXboxControllerDrive = true;
 
-  private final boolean useManipulator = false;
+  private final boolean useManipulator = true;
   private final Superstructure manipulator;
 
   // Controllers
@@ -101,12 +99,10 @@ public class RobotContainer {
                   new ModuleIOSparkMax(2),
                   new ModuleIOSparkMax(3));
         }
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+        vision = new Vision(drive::addVisionMeasurement); // ,
+        // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+        // new VisionIOPhotonVision(
+        //    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
         if (useManipulator) {
           manipulator = new Superstructure(new SuperstructureIOSpark());
         } else {
@@ -192,7 +188,7 @@ public class RobotContainer {
               () -> -1 * driveXboxController.getLeftY(),
               () -> -1 * driveXboxController.getLeftX(),
               () -> -1 * driveXboxController.getRightX(),
-              () -> 0.1)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
+              () -> 1.0)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
       // Lock to 0° when A button is held
       // joystick
       //     .button(11)

@@ -13,13 +13,10 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.wpilibj.Timer;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -30,12 +27,13 @@ import java.util.function.DoubleSupplier;
 public class SuperstructureIOSpark implements SuperstructureIO {
   private final SparkFlex feeder = new SparkFlex(feederCanId, MotorType.kBrushless);
   private final SparkFlex launcher = new SparkFlex(launcherCanId, MotorType.kBrushless);
-  //private final SparkFlex launcherFollower = new SparkFlex(launcherFollowerCanId, MotorType.kBrushless);
+  // private final SparkFlex launcherFollower = new SparkFlex(launcherFollowerCanId,
+  // MotorType.kBrushless);
   private final SparkFlex intakeMotor = new SparkFlex(intakeMotorCanId, MotorType.kBrushless);
   private final RelativeEncoder feederEncoder = feeder.getEncoder();
   private final RelativeEncoder launcherEncoder = launcher.getEncoder();
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
-  //private final SparkClosedLoopController manipulatorController;
+  // private final SparkClosedLoopController manipulatorController;
 
   public SuperstructureIOSpark() {
     var feederConfig = new SparkFlexConfig();
@@ -50,7 +48,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / feederMotorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-    //feederConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0.1, 0, 0);
+    // feederConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0.1, 0, 0);
     tryUntilOk(
         feeder,
         5,
@@ -78,7 +76,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             launcher.configure(
                 launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    //manipulatorController = launcher.getClosedLoopController();
+    // manipulatorController = launcher.getClosedLoopController();
 
     var intakeConfig = new SparkFlexConfig();
     intakeConfig
@@ -100,7 +98,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             intakeMotor.configure(
                 intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    //Timer.delay(0.1); // FIXME: idk if this is necessary
+    // Timer.delay(0.1); // FIXME: idk if this is necessary
 
     // set up Spark Flex configuration for the left motor
     // (not sure what everything is set to but I think it works)
@@ -122,7 +120,8 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     //     5,
     //     () ->
     //         launcherFollower.configure(
-    //             followMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    //             followMotorConfig, ResetMode.kResetSafeParameters,
+    // PersistMode.kPersistParameters));
   }
 
   @Override

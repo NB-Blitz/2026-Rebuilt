@@ -8,16 +8,16 @@
 package frc.robot.subsystems.superstructure;
 
 public class SuperstructureConstants {
-  public static final int feederCanId = 5;
+  public static final int feederCanId = 10;
   public static final double feederMotorReduction = 1.0;
   public static final int feederCurrentLimit = 60;
 
-  public static final int launcherCanId = 6;
+  public static final int launcherCanId = 11;
   public static final int launcherFollowerCanId = 107; // FIXME
   public static final double launcherMotorReduction = 1.0;
   public static final int launcherCurrentLimit = 60;
 
-  public static final int intakeMotorCanId = 22; // FIXME
+  public static final int intakeMotorCanId = 9; // FIXME
   public static final double intakeMotorReduction = 1.0; // FIXME
   public static final int intakeCurrentLimit = 60; // FIXME
 
