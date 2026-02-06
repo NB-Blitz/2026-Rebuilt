@@ -33,6 +33,10 @@ public class FuelVelocity {
           0.0,
           new Rotation2d(Math.PI)); // FIXME: get correct x value for the shooter offset
 
+  // FIXME: This is probably not correct
+  public static final Transform2d INTAKE_POSITION_INV =
+      new Transform2d(Units.inchesToMeters(-9), 0.0, new Rotation2d(Math.PI));
+
   /**
    * Calculates the max velocity the robot can shoot the fuel at in order to make sure the fuel
    * doesn't go higher than the max height

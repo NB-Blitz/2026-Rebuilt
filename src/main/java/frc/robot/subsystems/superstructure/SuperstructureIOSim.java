@@ -73,80 +73,147 @@ public class SuperstructureIOSim implements SuperstructureIO {
     inputs.intakeLauncherCurrentAmps = intakeLauncherSim.getCurrentDrawAmps();
   }
 
+  private int tickCount = 0;
+
   @Override
   public void setFeederVoltage(double volts) {
     feederAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
 
-    if (volts < 0) {
+    tickCount++;
+
+    if (volts == SuperstructureConstants.intakingFeederVoltage) {
       intakeSimulation.startIntake();
     } else if (volts == 0) {
       intakeSimulation.stopIntake();
-    } else {
-      if (intakeSimulation.obtainGamePieceFromIntake()) {
+    } else if (volts == -SuperstructureConstants.intakingFeederVoltage) { // ejecting
+      if (tickCount >= 5) {
+        tickCount = 0;
+        if (intakeSimulation.obtainGamePieceFromIntake()) {
 
-        double launchVelocity =
-            FuelVelocity.calcFixedLaunchVelocity(driveTrain.getSimulatedDriveTrainPose());
-        double maxVelocity = FuelVelocity.calculateMaxVelocty(FuelVelocity.MAX_HEIGHT);
+          RebuiltFuelOnFly fuelOnFly =
+              new RebuiltFuelOnFly(
+                  // Specify the position of the chassis when the note is launched
+                  driveTrain.getSimulatedDriveTrainPose().getTranslation(),
+                  // Specify the translation of the shooter from the robot center (in the shooter’s
+                  // reference frame)
+                  FuelVelocity.INTAKE_POSITION_INV.getTranslation(),
+                  // Specify the field-relative speed of the chassis, adding it to the initial
+                  // velocity of the projectile
+                  driveTrain.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                  // The shooter facing direction is the same as the robot’s facing direction
+                  driveTrain
+                      .getSimulatedDriveTrainPose()
+                      .getRotation()
+                      .rotateBy(FuelVelocity.SHOOTER_POSITION.getRotation()),
+                  // Initial height of the flying note
+                  Distance.ofBaseUnits(0.25, Units.Meters),
+                  // The launch speed is proportional to the RPM; assumed to be 16 meters/second at
+                  // 6000 RPM
+                  LinearVelocity.ofBaseUnits(1, Units.MetersPerSecond),
+                  // The angle at which the note is launched
+                  Angle.ofBaseUnits(FuelVelocity.THETA, Units.Radians));
 
-        RebuiltFuelOnFly fuelOnFly =
-            new RebuiltFuelOnFly(
-                // Specify the position of the chassis when the note is launched
-                driveTrain.getSimulatedDriveTrainPose().getTranslation(),
-                // Specify the translation of the shooter from the robot center (in the shooter’s
-                // reference frame)
-                FuelVelocity.SHOOTER_POSITION_INV.getTranslation(),
-                // Specify the field-relative speed of the chassis, adding it to the initial
-                // velocity of the projectile
-                driveTrain.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                // The shooter facing direction is the same as the robot’s facing direction
-                driveTrain
-                    .getSimulatedDriveTrainPose()
-                    .getRotation()
-                    .rotateBy(FuelVelocity.SHOOTER_POSITION.getRotation()),
-                // Initial height of the flying note
-                Distance.ofBaseUnits(FuelVelocity.ROBOT_SHOOTER_HEIGHT * 0.0254, Units.Meters),
-                // The launch speed is proportional to the RPM; assumed to be 16 meters/second at
-                // 6000 RPM
-                LinearVelocity.ofBaseUnits(
-                    // 8,
-                    launchVelocity > maxVelocity ? maxVelocity : launchVelocity,
-                    Units.MetersPerSecond),
-                // The angle at which the note is launched
-                Angle.ofBaseUnits(FuelVelocity.THETA, Units.Radians));
+          fuelOnFly
+              // Set the target center to the Hub of the current alliance
+              .withTargetPosition(
+                  () ->
+                      FieldMirroringUtils.toCurrentAllianceTranslation(
+                          new Translation3d(
+                              FuelVelocity.HUB_POSITION.getTranslation().getX(),
+                              FuelVelocity.HUB_POSITION.getTranslation().getY(),
+                              FuelVelocity.HUB_HEIGHT)))
+              // Set the tolerance
+              .withTargetTolerance(
+                  new Translation3d(
+                      FuelVelocity.HUB_DIMENTIONS.getX(), FuelVelocity.HUB_DIMENTIONS.getY(), 12))
+              // Set a callback to run when the note hits the target
+              .withHitTargetCallBack(() -> System.out.println("Made it in the hub"));
 
-        fuelOnFly
-            // Set the target center to the Hub of the current alliance
-            .withTargetPosition(
-                () ->
-                    FieldMirroringUtils.toCurrentAllianceTranslation(
-                        new Translation3d(
-                            FuelVelocity.HUB_POSITION.getTranslation().getX(),
-                            FuelVelocity.HUB_POSITION.getTranslation().getY(),
-                            FuelVelocity.HUB_HEIGHT)))
-            // Set the tolerance
-            .withTargetTolerance(
-                new Translation3d(
-                    FuelVelocity.HUB_DIMENTIONS.getX(), FuelVelocity.HUB_DIMENTIONS.getY(), 12))
-            // Set a callback to run when the note hits the target
-            .withHitTargetCallBack(() -> System.out.println("Made it in the hub"));
+          fuelOnFly
+              // Configure callbacks to visualize the flight trajectory of the projectile
+              .withProjectileTrajectoryDisplayCallBack(
+              // Callback for when the note will eventually hit the target (if configured)
+              (pose3ds) ->
+                  Logger.recordOutput(
+                      "Flywheel/NoteProjectileSuccessfulShot", pose3ds.toArray(Pose3d[]::new)),
+              // Callback for when the note will eventually miss the target, or if no target is
+              // configured
+              (pose3ds) ->
+                  Logger.recordOutput(
+                      "Flywheel/NoteProjectileUnsuccessfulShot", pose3ds.toArray(Pose3d[]::new)));
 
-        fuelOnFly
-            // Configure callbacks to visualize the flight trajectory of the projectile
-            .withProjectileTrajectoryDisplayCallBack(
-            // Callback for when the note will eventually hit the target (if configured)
-            (pose3ds) ->
-                Logger.recordOutput(
-                    "Flywheel/NoteProjectileSuccessfulShot", pose3ds.toArray(Pose3d[]::new)),
-            // Callback for when the note will eventually miss the target, or if no target is
-            // configured
-            (pose3ds) ->
-                Logger.recordOutput(
-                    "Flywheel/NoteProjectileUnsuccessfulShot", pose3ds.toArray(Pose3d[]::new)));
-
-        fuelOnFly.enableBecomesGamePieceOnFieldAfterTouchGround();
-        SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
+          fuelOnFly.enableBecomesGamePieceOnFieldAfterTouchGround();
+          SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
+        }
       }
-    }
+    } else if (volts == SuperstructureConstants.launchingFeederVoltage)
+      if (tickCount >= 5) {
+        tickCount = 0;
+        if (intakeSimulation.obtainGamePieceFromIntake()) {
+
+          double launchVelocity =
+              FuelVelocity.calcFixedLaunchVelocity(driveTrain.getSimulatedDriveTrainPose());
+          double maxVelocity = FuelVelocity.calculateMaxVelocty(FuelVelocity.MAX_HEIGHT);
+
+          RebuiltFuelOnFly fuelOnFly =
+              new RebuiltFuelOnFly(
+                  // Specify the position of the chassis when the note is launched
+                  driveTrain.getSimulatedDriveTrainPose().getTranslation(),
+                  // Specify the translation of the shooter from the robot center (in the shooter’s
+                  // reference frame)
+                  FuelVelocity.SHOOTER_POSITION_INV.getTranslation(),
+                  // Specify the field-relative speed of the chassis, adding it to the initial
+                  // velocity of the projectile
+                  driveTrain.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                  // The shooter facing direction is the same as the robot’s facing direction
+                  driveTrain
+                      .getSimulatedDriveTrainPose()
+                      .getRotation()
+                      .rotateBy(FuelVelocity.SHOOTER_POSITION.getRotation()),
+                  // Initial height of the flying note
+                  Distance.ofBaseUnits(FuelVelocity.ROBOT_SHOOTER_HEIGHT * 0.0254, Units.Meters),
+                  // The launch speed is proportional to the RPM; assumed to be 16 meters/second at
+                  // 6000 RPM
+                  LinearVelocity.ofBaseUnits(
+                      // 8,
+                      launchVelocity > maxVelocity ? maxVelocity : launchVelocity,
+                      Units.MetersPerSecond),
+                  // The angle at which the note is launched
+                  Angle.ofBaseUnits(FuelVelocity.THETA, Units.Radians));
+
+          fuelOnFly
+              // Set the target center to the Hub of the current alliance
+              .withTargetPosition(
+                  () ->
+                      FieldMirroringUtils.toCurrentAllianceTranslation(
+                          new Translation3d(
+                              FuelVelocity.HUB_POSITION.getTranslation().getX(),
+                              FuelVelocity.HUB_POSITION.getTranslation().getY(),
+                              FuelVelocity.HUB_HEIGHT)))
+              // Set the tolerance
+              .withTargetTolerance(
+                  new Translation3d(
+                      FuelVelocity.HUB_DIMENTIONS.getX(), FuelVelocity.HUB_DIMENTIONS.getY(), 12))
+              // Set a callback to run when the note hits the target
+              .withHitTargetCallBack(() -> System.out.println("Made it in the hub"));
+
+          fuelOnFly
+              // Configure callbacks to visualize the flight trajectory of the projectile
+              .withProjectileTrajectoryDisplayCallBack(
+              // Callback for when the note will eventually hit the target (if configured)
+              (pose3ds) ->
+                  Logger.recordOutput(
+                      "Flywheel/NoteProjectileSuccessfulShot", pose3ds.toArray(Pose3d[]::new)),
+              // Callback for when the note will eventually miss the target, or if no target is
+              // configured
+              (pose3ds) ->
+                  Logger.recordOutput(
+                      "Flywheel/NoteProjectileUnsuccessfulShot", pose3ds.toArray(Pose3d[]::new)));
+
+          fuelOnFly.enableBecomesGamePieceOnFieldAfterTouchGround();
+          SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
+        }
+      }
   }
 
   @Override
