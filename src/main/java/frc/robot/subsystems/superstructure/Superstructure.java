@@ -56,7 +56,6 @@ public class Superstructure extends SubsystemBase {
   /** Set the rollers to the values for launching. Spins up before feeding fuel. */
   public Command launch() {
     return run(() -> {
-          io.setFeederSpeed(spinUpFeederSpeed);
           io.setLauncherSpeed(launchingLauncherSpeed);
         })
         .withTimeout(spinUpSeconds)
@@ -65,11 +64,13 @@ public class Superstructure extends SubsystemBase {
                 () -> {
                   io.setFeederSpeed(launchingFeederSpeed);
                   io.setLauncherSpeed(launchingLauncherSpeed);
+                  io.setIntakeSpeed(launchingLauncherSpeed * 1.5);
                 }))
         .finallyDo(
             () -> {
               io.setFeederSpeed(0.0);
               io.setLauncherSpeed(0.0);
+              io.setIntakeSpeed(0);
             });
   }
 }

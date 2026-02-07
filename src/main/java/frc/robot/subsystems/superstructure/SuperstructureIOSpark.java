@@ -40,7 +40,8 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     feederConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(feederCurrentLimit)
-        .voltageCompensation(12.0);
+        .voltageCompensation(12.0)
+        .inverted(true);
     feederConfig
         .encoder
         .positionConversionFactor(
@@ -82,7 +83,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     intakeConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(intakeCurrentLimit)
-        .inverted(true)
+        .inverted(false)
         .voltageCompensation(12.0);
     intakeConfig
         .encoder
