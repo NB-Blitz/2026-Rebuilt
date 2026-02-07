@@ -7,8 +7,11 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.*;
-import static frc.robot.subsystems.drive.constants.DriveConstants.*;
+import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.subsystems.drive.constants.DriveConstants.driveBaseRadius;
+import static frc.robot.subsystems.drive.constants.DriveConstants.maxSpeedMetersPerSec;
+import static frc.robot.subsystems.drive.constants.DriveConstants.moduleTranslations;
+import static frc.robot.subsystems.drive.constants.DriveConstants.ppConfig;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -21,6 +24,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -179,6 +184,13 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    Pose3d currentRobot = new Pose3d(poseEstimator.getEstimatedPosition());
+
+    Logger.recordOutput(
+        "Vision/cam0offset", currentRobot.transformBy(VisionConstants.robotToCamera0));
+    Logger.recordOutput(
+        "Vision/cam1offset", currentRobot.transformBy(VisionConstants.robotToCamera1));
   }
 
   /**
