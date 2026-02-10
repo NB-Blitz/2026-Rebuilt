@@ -146,7 +146,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
           SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
         }
       }
-    } else if (volts == SuperstructureConstants.launchingFeederVoltage)
+    } else if (volts == SuperstructureConstants.launchingFeederVoltage) {
       if (tickCount >= 5) {
         tickCount = 0;
         if (intakeSimulation.obtainGamePieceFromIntake()) {
@@ -214,6 +214,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
           SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
         }
       }
+    }
   }
 
   @Override
