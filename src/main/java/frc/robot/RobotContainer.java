@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlign;
+import frc.robot.commands.AutoAlign3;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -251,7 +252,11 @@ public class RobotContainer {
       driveXboxController
           .y()
           .whileTrue(
-              new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
+              new AutoAlign3(
+                  drive,
+                  () -> -1 * driveXboxController.getLeftY(),
+                  () -> -1 * driveXboxController.getLeftX()));
+      // new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
 
       // Switch to X pattern when X button is pressed
       driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

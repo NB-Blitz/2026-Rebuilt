@@ -9,6 +9,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class FuelVelocity {
   public static final double HUB_HEIGHT = 72.0; // in inches
+  public static final double MAX_HEIGHT = Units.feetToMeters(10.0);
+  public static final double MAX_VELOCITY = FuelVelocity.calculateMaxVelocty(MAX_HEIGHT);
   public static final double ROBOT_SHOOTER_HEIGHT =
       18.309; // in inches FIXME: get right measurement
   public static final double THETA = Units.degreesToRadians(68.03); // FIXME: launch angle
@@ -22,10 +24,35 @@ public class FuelVelocity {
           new Rotation2d(0.0)); // FIXME: plug in the center of the hub here in meters
   public static final Transform2d SHOOTER_POSITION =
       new Transform2d(
+          Units.inchesToMeters(8.299),
+          0.0,
+          new Rotation2d(Math.PI)); // FIXME: get correct x value for the shooter offset
+  public static final Transform2d SHOOTER_POSITION_INV =
+      new Transform2d(
           Units.inchesToMeters(-8.299),
           0.0,
           new Rotation2d(Math.PI)); // FIXME: get correct x value for the shooter offset
 
+  // FIXME: This is probably not correct
+  public static final Transform2d INTAKE_POSITION_INV =
+      new Transform2d(Units.inchesToMeters(-9), 0.0, new Rotation2d(Math.PI));
+
+  /**
+   * Calculates the max velocity the robot can shoot the fuel at in order to make sure the fuel
+   * doesn't go higher than the max height
+   *
+   * @param maxHeight - the max height the robot should be able to shoot the fuel
+   * @return - velocity in m/s
+   */
+  public static double calculateMaxVelocty(double maxHeight) {
+    double maxVelocity =
+        Math.sqrt(2 * GRAVITY * (maxHeight - Units.inchesToMeters(ROBOT_SHOOTER_HEIGHT)))
+            / Math.sin(THETA);
+
+    Logger.recordOutput("FuelVelocity/MaxVelocity", maxVelocity);
+
+    return maxVelocity;
+  }
   /**
    * Calculates the distance from the center of the robot's shooter to the center of the hub given
    * the robots position.
