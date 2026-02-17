@@ -13,6 +13,9 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -33,6 +36,12 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   private final RelativeEncoder feederEncoder = feeder.getEncoder();
   private final RelativeEncoder launcherEncoder = launcher.getEncoder();
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
+
+  private final SparkClosedLoopController intakeController = intakeMotor.getClosedLoopController();
+  private final SparkClosedLoopController feederController = feeder.getClosedLoopController();
+  private final SparkClosedLoopController launcherController = launcher.getClosedLoopController();
+ 
+//   private final double odometryFrequency = 0.0;
   // private final SparkClosedLoopController manipulatorController;
 
   public SuperstructureIOSpark() {
@@ -49,7 +58,19 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / feederMotorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-    // feederConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pid(0.1, 0, 0);
+    feederConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .pid(feederKp, 0.0, feederKd);
+    // feederConfig
+    //     .signals
+    //     .primaryEncoderPositionAlwaysOn(true)
+    //     .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+    //     .primaryEncoderVelocityAlwaysOn(true)
+    //     .primaryEncoderVelocityPeriodMs(20)
+    //     .appliedOutputPeriodMs(20)
+    //     .busVoltagePeriodMs(20)
+    //     .outputCurrentPeriodMs(20);
     tryUntilOk(
         feeder,
         5,
@@ -70,6 +91,19 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / launcherMotorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
+    launcherConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .pid(launcherKp, 0.0, launcherKd);
+    // launcherConfig
+    //     .signals
+    //     .primaryEncoderPositionAlwaysOn(true)
+    //     .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+    //     .primaryEncoderVelocityAlwaysOn(true)
+    //     .primaryEncoderVelocityPeriodMs(20)
+    //     .appliedOutputPeriodMs(20)
+    //     .busVoltagePeriodMs(20)
+    //     .outputCurrentPeriodMs(20);
     tryUntilOk(
         launcher,
         5,
@@ -92,6 +126,19 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / intakeMotorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
+    intakeConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .pid(intakeKp, 0.0, intakeKd);
+    // intakeConfig
+    //     .signals
+    //     .primaryEncoderPositionAlwaysOn(true)
+    //     .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+    //     .primaryEncoderVelocityAlwaysOn(true)
+    //     .primaryEncoderVelocityPeriodMs(20)
+    //     .appliedOutputPeriodMs(20)
+    //     .busVoltagePeriodMs(20)
+    //     .outputCurrentPeriodMs(20);
     tryUntilOk(
         intakeMotor,
         5,
@@ -152,15 +199,24 @@ public class SuperstructureIOSpark implements SuperstructureIO {
 
   @Override
   public void setFeederSpeed(double speed) {
-    feeder.set(speed);
+    // feeder.set(speed);
+    feederController.setSetpoint(
+        speed,
+        ControlType.kVelocity);
   }
 
   @Override
   public void setIntakeSpeed(double speed) {
-    intakeMotor.set(speed);
+    // intakeMotor.set(speed);
+    intakeController.setSetpoint(
+        speed,
+        ControlType.kVelocity);
   }
 
   public void setLauncherSpeed(double speed) {
-    launcher.set(speed);
+    // launcher.set(speed);
+    launcherController.setSetpoint(
+        speed,
+        ControlType.kVelocity);
   }
 }
