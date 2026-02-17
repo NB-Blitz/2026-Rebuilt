@@ -9,18 +9,15 @@ package frc.robot.subsystems.superstructure;
 
 import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.subsystems.superstructure.SuperstructureConstants.feederMotorReduction;
-import static frc.robot.subsystems.superstructure.SuperstructureConstants.intakeLauncherMotorReduction;
+import static frc.robot.subsystems.superstructure.SuperstructureConstants.launcherMotorReduction;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.Units;
-// import edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-// import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.util.FuelVelocity;
@@ -76,16 +73,16 @@ public class SuperstructureIOSim implements SuperstructureIO {
 
   @Override
   public void setFeederSpeed(double speed) {
-    double volts = speed * 12.0;
-    feederAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    // double volts = speed * 12.0;
+    // feederAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
 
     tickCount++;
 
-    if (volts == SuperstructureConstants.intakingFeederVoltage) {
+    if (speed == SuperstructureConstants.intakingFeederSpeed) {
       intakeSimulation.startIntake();
-    } else if (volts == 0) {
+    } else if (speed == 0) {
       intakeSimulation.stopIntake();
-    } else if (volts == -SuperstructureConstants.intakingFeederVoltage) { // ejecting
+    } else if (speed == -SuperstructureConstants.intakingFeederSpeed) { // ejecting
       if (tickCount >= 5) {
         tickCount = 0;
         if (intakeSimulation.obtainGamePieceFromIntake()) {
@@ -146,7 +143,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
           SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
         }
       }
-    } else if (volts == SuperstructureConstants.launchingFeederVoltage) {
+    } else if (speed == SuperstructureConstants.launchingFeederSpeed) {
       if (tickCount >= 5) {
         tickCount = 0;
         if (intakeSimulation.obtainGamePieceFromIntake()) {
@@ -218,13 +215,13 @@ public class SuperstructureIOSim implements SuperstructureIO {
   }
 
   @Override
-  public void setIntakeLauncherVoltage(double volts) {
-    if (volts < 0) {
+  public void setIntakeSpeed(double speed) {
+    if (speed < 0) {
       intakeSimulation.startIntake();
-    } else if (volts == 0) {
+    } else if (speed == 0) {
       intakeSimulation.stopIntake();
     }
-    intakeLauncherAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    // intakeLauncherAppliedVolts = MathUtil.clamp(speed * 12.0, -12.0, 12.0);
   }
 
   @Override

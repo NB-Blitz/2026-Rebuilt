@@ -13,11 +13,7 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -155,13 +151,15 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     ifOk(launcher, launcher::getOutputCurrent, (value) -> inputs.intakeLauncherCurrentAmps = value);
   }
 
-  public void setDriveVelocity(double velocityRadPerSec) {
-    manipulatorController.setSetpoint(
-        velocityRadPerSec,
-        ControlType.kMAXMotionVelocityControl,
-        ClosedLoopSlot.kSlot0,
-        0,
-        ArbFFUnits.kVoltage);
+  //   public void setDriveVelocity(double velocityRadPerSec) {
+  //     manipulatorController.setSetpoint(
+  //         velocityRadPerSec,
+  //         ControlType.kMAXMotionVelocityControl,
+  //         ClosedLoopSlot.kSlot0,
+  //         0,
+  //         ArbFFUnits.kVoltage);
+  //   }
+
   @Override
   public void setFeederSpeed(double speed) {
     feeder.set(speed);

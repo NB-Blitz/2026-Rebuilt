@@ -78,7 +78,7 @@ public class DriveCommands {
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), ROT_DEADBAND);
 
           // Square rotation value for more precise control
-          omega = Math.copySign(omega * omega, omega) * 0.5;
+          omega = Math.copySign(omega * omega, omega); // * 0.8;
 
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =

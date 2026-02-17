@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -54,20 +53,19 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final Superstructure manipulator;
+
   private SwerveDriveSimulation driveSimulation = null;
 
-  // Constant to switch between the practice SDS base and the competition Flex base
-  private final boolean useSecondController = false;
   private final boolean useXboxControllerDrive = true;
-
+  private final boolean useSecondController = true;
   private final boolean useManipulator = true;
-  private final Superstructure manipulator;
 
   // Controllers
   private final CommandJoystick joystick;
-  private final CommandXboxController xBoxController;
   private final CommandXboxController driveXboxController;
-  private final CommandGenericHID driverStation = new CommandGenericHID(2);
+  private final CommandXboxController shootXboxController;
+  // private final CommandGenericHID driverStation = new CommandGenericHID(2);
 
   private final LEDStrip ledStrip = new LEDStrip(9, 58);
   // Dashboard inputs
@@ -76,9 +74,9 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     if (useSecondController) {
-      xBoxController = new CommandXboxController(1);
+      shootXboxController = new CommandXboxController(1);
     } else {
-      xBoxController = null;
+      shootXboxController = null;
     }
     if (useXboxControllerDrive) {
       driveXboxController = new CommandXboxController(0);
@@ -109,12 +107,10 @@ public class RobotContainer {
                   new ModuleIOSparkMax(3),
                   (pose) -> {});
         }
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+        vision = new Vision(drive::addVisionMeasurement); // ,
+        // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+        // new VisionIOPhotonVision(
+        //    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
         if (useManipulator) {
           manipulator = new Superstructure(new SuperstructureIOSpark());
         } else {
@@ -212,14 +208,7 @@ public class RobotContainer {
               () -> -1 * driveXboxController.getLeftY(),
               () -> -1 * driveXboxController.getLeftX(),
               () -> -1 * driveXboxController.getRightX(),
-              () -> 1.0)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
-      // Lock to 0° when A button is held
-      // joystick
-      //     .button(11)
-      //     .whileTrue(
-      //         DriveCommands.joystickDriveAtAngle(
-      //             drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new
-      // Rotation2d()));
+              () -> 0.5)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
 
       // Reset gyro / odometry
       final Runnable resetGyro =
@@ -234,31 +223,8 @@ public class RobotContainer {
           .povDown()
           .onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-      // Align to reef positions
-      driveXboxController
-          .rightBumper()
-          .whileTrue(
-              new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.rightAlign[0]));
-      driveXboxController
-          .leftBumper()
-          .whileTrue(
-              new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.leftAlign[0]));
-      driveXboxController
-          .y()
-          .whileTrue(
-              new AutoAlign3(
-                  drive,
-                  () -> -1 * driveXboxController.getLeftY(),
-                  () -> -1 * driveXboxController.getLeftX()));
-      // new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
-
       // Switch to X pattern when X button is pressed
       driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-      driveXboxController.rightTrigger().whileTrue(manipulator.launch());
-      driveXboxController.leftTrigger().whileTrue(manipulator.intake());
-      driveXboxController.b().whileTrue(manipulator.eject());
-
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
@@ -267,23 +233,16 @@ public class RobotContainer {
               () -> -1 * joystick.getX(),
               () -> -1 * joystick.getZ(),
               () -> 0.5 * (1 + -joystick.getRawAxis(3))));
-      // Lock to 0° when A button is held
-      // joystick
-      //     .button(11)
-      //     .whileTrue(
-      //         DriveCommands.joystickDriveAtAngle(
-      //             drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new
-      // Rotation2d()));
-
-      // Switch to X pattern when X button is pressed
-      joystick.button(4).onTrue(Commands.runOnce(drive::stopWithX, drive));
 
       // Reset gyro to 0° when B button is pressed
       joystick
           .button(7)
           .onTrue(Commands.runOnce(() -> drive.resetGyro(), drive).ignoringDisable(true));
 
-      // Align to reef positions
+      // Switch to X pattern when X button is pressed
+      joystick.button(4).onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+      // Align to hub
       joystick
           .button(6)
           .whileTrue(
@@ -292,13 +251,37 @@ public class RobotContainer {
           .button(5)
           .whileTrue(
               new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.leftAlign[0]));
-      /*
-      joystick
-          .button(8)
-          .whileTrue(
-              new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.centerAlign[0]));
-      */
+      /* joystick
+      .button(8)
+      .whileTrue(
+          new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.centerAlign[0]));*/
     }
+
+    if (useManipulator) {
+      manipulatorButtonBindings(useSecondController ? shootXboxController : driveXboxController);
+    }
+  }
+
+  private void manipulatorButtonBindings(CommandXboxController controller) {
+    // Align to hub positions
+    controller
+        .rightBumper()
+        .whileTrue(
+            new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.rightAlign[0]));
+    controller
+        .leftBumper()
+        .whileTrue(
+            new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.leftAlign[0]));
+    controller
+        .y()
+        .whileTrue(
+            new AutoAlign3(
+                drive, () -> -1 * controller.getLeftY(), () -> -1 * controller.getLeftX()));
+    // new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
+
+    controller.rightTrigger().whileTrue(manipulator.launch());
+    controller.leftTrigger().whileTrue(manipulator.intake());
+    controller.b().whileTrue(manipulator.eject());
   }
 
   /**
