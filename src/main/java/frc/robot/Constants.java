@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -27,6 +28,23 @@ public final class Constants {
       new Transform2d[] {new Transform2d(1, -1, Rotation2d.fromDegrees(135.0))};
   public static final Transform2d[] rightAlign =
       new Transform2d[] {new Transform2d(1, 1, Rotation2d.fromDegrees(225.0))};
+  public static final Transform2d[] trenchAlign =
+      new Transform2d[] {
+        new Transform2d(1, 0, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(-1, 0, Rotation2d.fromDegrees(180.0))
+      };
+  public static final int[] trenchTags = {1, 6, 7, 12, 17, 22, 23, 28};
+  public static final Transform2d[] towerAlign =
+      new Transform2d[] {
+        new Transform2d(
+            Units.inchesToMeters(65),
+            Units.inchesToMeters(32.25 / 2),
+            Rotation2d.fromDegrees(270.0)) // TODO check this
+      };
+  public static final int[] towerTags = {15, 31};
+  public static final Transform2d[] depotAlign =
+      new Transform2d[] {new Transform2d(0.5, 0, Rotation2d.fromDegrees(0.0))};
+  public static final int[] depotTags = {13, 29};
 
   public static final PIDController xController = new PIDController(4, 0, 0);
   public static final PIDController yController = new PIDController(4, 0, 0);

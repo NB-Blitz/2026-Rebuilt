@@ -58,7 +58,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final boolean useXboxControllerDrive = true;
-  private final boolean useSecondController = true;
+  private final boolean useSecondController = false;
   private final boolean useManipulator = true;
 
   // Controllers
@@ -245,12 +245,10 @@ public class RobotContainer {
       // Align to hub
       joystick
           .button(6)
-          .whileTrue(
-              new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.rightAlign[0]));
+          .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign));
       joystick
           .button(5)
-          .whileTrue(
-              new AutoAlign(drive, vision, () -> vision.getAlignTags(0), Constants.leftAlign[0]));
+          .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign));
       /* joystick
       .button(8)
       .whileTrue(
@@ -266,12 +264,10 @@ public class RobotContainer {
     // Align to hub positions
     controller
         .rightBumper()
-        .whileTrue(
-            new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.rightAlign[0]));
+        .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign));
     controller
         .leftBumper()
-        .whileTrue(
-            new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.leftAlign[0]));
+        .whileTrue(new AutoAlign(drive, Constants.depotTags, Constants.depotAlign));
     controller
         .y()
         .whileTrue(

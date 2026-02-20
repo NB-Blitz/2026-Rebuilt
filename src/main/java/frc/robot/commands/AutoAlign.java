@@ -3,21 +3,23 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 public class AutoAlign extends InstantCommand {
   private Drive driveRef;
-  private Vision visionRef;
-  private Supplier<List<Pose2d>> reefTagSupplier;
-  private Transform2d offsetFromTag;
+  private List<Pose2d> tagPoseList = new ArrayList<>();
+  private Transform2d[] offsetFromTag;
+  private int offsetIndex = 0;
 
   private ChassisSpeeds speeds = new ChassisSpeeds();
 
@@ -31,19 +33,24 @@ public class AutoAlign extends InstantCommand {
   private Translation3d goalErrors = new Translation3d(0.01, 0.01, 0.01);
 
   private Pose2d cachedTarget = null;
+  private Pose2d cachedTag = null;
 
-  public AutoAlign(
-      Drive drive, Vision vision, Supplier<List<Pose2d>> reefTags, Transform2d offsetPose2d) {
+  public AutoAlign(Drive drive, int[] Tags, Transform2d[] offsetPose2d) {
     driveRef = drive;
-    visionRef = vision;
-    reefTagSupplier = reefTags;
+    for (int tagId : Tags) {
+      Optional<Pose3d> tagPose = VisionConstants.aprilTagLayout.getTagPose(tagId);
+      if (tagPose.isPresent()) {
+        tagPoseList.add(tagPose.get().toPose2d());
+      }
+    }
     offsetFromTag = offsetPose2d;
   }
 
   @Override
   public void initialize() {
     cachedTarget = null;
-    visionRef.disableFrontCameraOdometery();
+    cachedTag = null;
+    offsetIndex = 0;
   }
 
   @Override
@@ -52,9 +59,7 @@ public class AutoAlign extends InstantCommand {
   }
 
   @Override
-  public void end(boolean interrupted) {
-    visionRef.enableFrontCameraOdometery();
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
@@ -70,13 +75,15 @@ public class AutoAlign extends InstantCommand {
     double maxSpeedY = Math.abs(maximumSpeeds.vyMetersPerSecond);
     double maxSpeedTheta = Math.abs(maximumSpeeds.omegaRadiansPerSecond);
 
-    if (reefTagSupplier.get().isEmpty() && cachedTarget == null) {
+    if (tagPoseList.isEmpty() && cachedTarget == null) {
       return true;
     }
     Pose2d fieldRelativeTarget;
+    if (cachedTag == null) {
+      cachedTag = driveRef.getPose().nearest(tagPoseList);
+    }
     if (cachedTarget == null) {
-      Pose2d nearestTag = driveRef.getPose().nearest(reefTagSupplier.get());
-      fieldRelativeTarget = nearestTag.transformBy(offsetFromTag);
+      fieldRelativeTarget = cachedTag.transformBy(offsetFromTag[offsetIndex]);
       cachedTarget = fieldRelativeTarget;
     } else {
       fieldRelativeTarget = cachedTarget;
@@ -110,6 +117,10 @@ public class AutoAlign extends InstantCommand {
 
     driveRef.runVelocity(speeds);
 
-    return xAlignSpeed == 0.0 && yAlignSpeed == 0.0 && thetaAlignSpeed == 0.0;
+    if (xAlignSpeed == 0.0 && yAlignSpeed == 0.0 && thetaAlignSpeed == 0.0) {
+      cachedTarget = null;
+      offsetIndex++;
+    }
+    return offsetIndex >= offsetFromTag.length;
   }
 }
