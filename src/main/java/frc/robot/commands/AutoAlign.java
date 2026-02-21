@@ -30,7 +30,7 @@ public class AutoAlign extends InstantCommand {
   private boolean aligned = false;
 
   private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 2);
-  private Translation3d goalErrors = new Translation3d(0.15, 0.15, Math.PI / 90);
+  private Translation3d goalErrors = new Translation3d(0.125, 0.125, Math.PI / 90);
 
   private Pose2d cachedTarget = null;
   private Pose2d cachedTag = null;

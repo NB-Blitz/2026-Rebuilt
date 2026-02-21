@@ -46,9 +46,9 @@ public final class Constants {
       new Transform2d[] {new Transform2d(0.5, 0, Rotation2d.fromDegrees(0.0))};
   public static final int[] depotTags = {13, 29};
 
-  public static final PIDController xController = new PIDController(4.5, 0, 0);
-  public static final PIDController yController = new PIDController(4.5, 0, 0);
-  public static final PIDController thetaController = new PIDController(6, 0, 0);
+  public static final PIDController xController = new PIDController(4.75, 0, 0);
+  public static final PIDController yController = new PIDController(4.75, 0, 0);
+  public static final PIDController thetaController = new PIDController(5.75, 0, 0);
 
   public static enum Mode {
     /** Running on a real robot. */
