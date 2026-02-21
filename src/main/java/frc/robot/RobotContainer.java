@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlign;
+import frc.robot.commands.AutoAlign2;
 import frc.robot.commands.AutoAlign3;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -198,6 +200,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    NamedCommands.registerCommand("AutoAlign", new AutoAlign2(drive));
+    NamedCommands.registerCommand("Launch", manipulator.launch());
   }
 
   /**
