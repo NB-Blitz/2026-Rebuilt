@@ -37,6 +37,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.FuelVelocity;
 import frc.robot.util.LEDStrip;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -225,6 +226,14 @@ public class RobotContainer {
 
       // Switch to X pattern when X button is pressed
       driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+      final Runnable increaseAdjustment = () -> FuelVelocity.adjustment += 0.1;
+      final Runnable decreaseAdjustment = () -> FuelVelocity.adjustment -= 0.1;
+      driveXboxController.povRight().onTrue(Commands.runOnce(increaseAdjustment));
+      driveXboxController.povLeft().onTrue(Commands.runOnce(decreaseAdjustment));
+
+      Logger.recordOutput("FuelVelocity/ShootingAdjustment", FuelVelocity.adjustment);
+
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(

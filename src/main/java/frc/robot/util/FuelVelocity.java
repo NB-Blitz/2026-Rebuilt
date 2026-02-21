@@ -40,6 +40,8 @@ public class FuelVelocity {
   public static final Transform2d INTAKE_POSITION_INV =
       new Transform2d(Units.inchesToMeters(-9), 0.0, new Rotation2d(Math.PI));
 
+  public static double adjustment = 0.0; // in meters, used to manually shoot further or closer
+
   /**
    * Calculates the max velocity the robot can shoot the fuel at in order to make sure the fuel
    * doesn't go higher than the max height
@@ -84,7 +86,7 @@ public class FuelVelocity {
 
     Logger.recordOutput("FuelVelocity/DistanceFromHub", distanceFromHub);
 
-    result = GRAVITY * Math.pow(distanceFromHub, 2);
+    result = GRAVITY * Math.pow(distanceFromHub + adjustment, 2);
     result =
         result / (2 * Math.pow(Math.cos(THETA), 2) * (distanceFromHub * Math.tan(THETA) - HEIGHT));
     result = Math.sqrt(result);
