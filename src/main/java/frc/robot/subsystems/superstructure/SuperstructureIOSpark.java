@@ -13,6 +13,7 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -21,6 +22,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * This superstructure implementation is for Spark devices. It defaults to brushless control, but
@@ -40,8 +42,8 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   private final SparkClosedLoopController intakeController = intakeMotor.getClosedLoopController();
   private final SparkClosedLoopController feederController = feeder.getClosedLoopController();
   private final SparkClosedLoopController launcherController = launcher.getClosedLoopController();
- 
-//   private final double odometryFrequency = 0.0;
+
+  //   private final double odometryFrequency = 0.0;
   // private final SparkClosedLoopController manipulatorController;
 
   public SuperstructureIOSpark() {
@@ -53,15 +55,14 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .inverted(true);
     feederConfig
         .encoder
-        .positionConversionFactor(
-            2.0 * Math.PI / feederMotorReduction) // Rotor Rotations -> Roller Radians
-        .velocityConversionFactor((2.0 * Math.PI) / 60.0 / feederMotorReduction)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
+        .positionConversionFactor(1 / feederMotorReduction)
+        .velocityConversionFactor(1 / feederMotorReduction);
     feederConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(feederKp, 0.0, feederKd);
+        .pid(feederKp, 0.0, feederKd, ClosedLoopSlot.kSlot0)
+        .feedForward
+        .kV(feederKv);
     // feederConfig
     //     .signals
     //     .primaryEncoderPositionAlwaysOn(true)
@@ -86,15 +87,14 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .voltageCompensation(12.0);
     launcherConfig
         .encoder
-        .positionConversionFactor(
-            2.0 * Math.PI / launcherMotorReduction) // Rotor Rotations -> Roller Radians
-        .velocityConversionFactor((2.0 * Math.PI) / 60.0 / launcherMotorReduction)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
+        .positionConversionFactor(1 / launcherMotorReduction)
+        .velocityConversionFactor(1 / launcherMotorReduction);
     launcherConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(launcherKp, 0.0, launcherKd);
+        .pid(launcherKp, 0.0, launcherKd, ClosedLoopSlot.kSlot0)
+        .feedForward
+        .kV(launcherKv);
     // launcherConfig
     //     .signals
     //     .primaryEncoderPositionAlwaysOn(true)
@@ -121,15 +121,15 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .voltageCompensation(12.0);
     intakeConfig
         .encoder
-        .positionConversionFactor(
-            2.0 * Math.PI / intakeMotorReduction) // Rotor Rotations -> Roller Radians
-        .velocityConversionFactor((2.0 * Math.PI) / 60.0 / intakeMotorReduction)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
+        .positionConversionFactor(1 / intakeMotorReduction)
+        .velocityConversionFactor(1 / intakeMotorReduction);
     intakeConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(intakeKp, 0.0, intakeKd);
+        // .pid(intakeKp, 0.0, intakeKd);
+        .pid(intakeKp, 0.0, intakeKd, ClosedLoopSlot.kSlot0)
+        .feedForward
+        .kV(intakeKv);
     // intakeConfig
     //     .signals
     //     .primaryEncoderPositionAlwaysOn(true)
@@ -195,28 +195,31 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         new DoubleSupplier[] {launcher::getAppliedOutput, launcher::getBusVoltage},
         (values) -> inputs.intakeLauncherAppliedVolts = values[0] * values[1]);
     ifOk(launcher, launcher::getOutputCurrent, (value) -> inputs.intakeLauncherCurrentAmps = value);
+
+    Logger.recordOutput("Superstructure/Current Feeder Speed", feederEncoder.getVelocity());
+    Logger.recordOutput("Superstructure/Current Intake Speed", intakeEncoder.getVelocity());
+    Logger.recordOutput("Superstructure/Current Shooter Speed", launcherEncoder.getVelocity());
+    Logger.recordOutput(
+        "Superstructure/Launcher Is At Setpoint", launcherController.isAtSetpoint());
   }
 
   @Override
   public void setFeederSpeed(double speed) {
     // feeder.set(speed);
-    feederController.setSetpoint(
-        speed,
-        ControlType.kVelocity);
+    feederController.setSetpoint(speed, ControlType.kVelocity);
+    Logger.recordOutput("Superstructure/Feeder Target Speed", speed);
   }
 
   @Override
   public void setIntakeSpeed(double speed) {
     // intakeMotor.set(speed);
-    intakeController.setSetpoint(
-        speed,
-        ControlType.kVelocity);
+    intakeController.setSetpoint(speed, ControlType.kVelocity);
+    Logger.recordOutput("Superstructure/Intake Target Speed", speed);
   }
 
   public void setLauncherSpeed(double speed) {
     // launcher.set(speed);
-    launcherController.setSetpoint(
-        speed,
-        ControlType.kVelocity);
+    launcherController.setSetpoint(speed, ControlType.kVelocity);
+    Logger.recordOutput("Superstructure/Launcher Target Speed", speed);
   }
 }
