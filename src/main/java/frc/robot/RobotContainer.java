@@ -208,7 +208,7 @@ public class RobotContainer {
               () -> -1 * driveXboxController.getLeftY(),
               () -> -1 * driveXboxController.getLeftX(),
               () -> -1 * driveXboxController.getRightX(),
-              () -> 0.5)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
+              () -> 1)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
 
       // Reset gyro / odometry
       final Runnable resetGyro =

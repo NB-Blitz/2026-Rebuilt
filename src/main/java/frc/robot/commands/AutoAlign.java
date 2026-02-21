@@ -29,8 +29,8 @@ public class AutoAlign extends InstantCommand {
 
   private boolean aligned = false;
 
-  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(1.25, 1.25, 1.85);
-  private Translation3d goalErrors = new Translation3d(0.01, 0.01, 0.01);
+  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 2);
+  private Translation3d goalErrors = new Translation3d(0.15, 0.15, Math.PI / 90);
 
   private Pose2d cachedTarget = null;
   private Pose2d cachedTag = null;
@@ -89,15 +89,16 @@ public class AutoAlign extends InstantCommand {
       fieldRelativeTarget = cachedTarget;
     }
 
-    Pose2d offsetPose = driveRef.getPose().relativeTo(fieldRelativeTarget);
+    // Pose2d offsetPose = driveRef.getPose().relativeTo(fieldRelativeTarget);
+    Pose2d offsetPose = fieldRelativeTarget.relativeTo(driveRef.getPose());
 
     double xAlignSpeed =
-        MathUtil.clamp(xControllerRobot.calculate(offsetPose.getX()), -maxSpeedX, maxSpeedX);
+        MathUtil.clamp(-1 * xControllerRobot.calculate(offsetPose.getX()), -maxSpeedX, maxSpeedX);
     double yAlignSpeed =
-        MathUtil.clamp(yControllerRobot.calculate(offsetPose.getY()), -maxSpeedY, maxSpeedY);
+        MathUtil.clamp(-1 * yControllerRobot.calculate(offsetPose.getY()), -maxSpeedY, maxSpeedY);
     double thetaAlignSpeed =
         MathUtil.clamp(
-            thetaControllerRobot.calculate(offsetPose.getRotation().getRadians()),
+            -thetaControllerRobot.calculate(offsetPose.getRotation().getRadians()),
             -maxSpeedTheta,
             maxSpeedTheta);
 
