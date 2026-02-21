@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import java.util.Arrays;
 import org.littletonrobotics.junction.Logger;
 
 public class FuelVelocity {
@@ -18,10 +19,12 @@ public class FuelVelocity {
       9.80665000; // most accurate numbers FIXME: make it more accurate up to 100 decimals
   public static final double HEIGHT = Units.inchesToMeters(HUB_HEIGHT - ROBOT_SHOOTER_HEIGHT);
   public static final Translation2d HUB_DIMENTIONS = new Translation2d(44.4, 44.4); // in inches
-  public static final Pose2d HUB_POSITION =
-      new Pose2d(
-          new Translation2d(4.625, 4.035),
-          new Rotation2d(0.0)); // FIXME: plug in the center of the hub here in meters
+  public static final Pose2d[] HUB_POSITION = {
+    new Pose2d(
+        new Translation2d(4.625, 4.035),
+        new Rotation2d(0.0)), // FIXME: plug in the center of the hub here in meters
+    new Pose2d(new Translation2d(11.915, 4.035), new Rotation2d(0.0))
+  };
   public static final Transform2d SHOOTER_POSITION =
       new Transform2d(
           Units.inchesToMeters(8.299),
@@ -62,7 +65,8 @@ public class FuelVelocity {
    */
   public static double calcPosFromHub(Pose2d robotPosition) {
     Pose2d fieldRelativeShooter = robotPosition.transformBy(SHOOTER_POSITION);
-    Transform2d posDifference = HUB_POSITION.minus(fieldRelativeShooter);
+    Pose2d hubPosition = robotPosition.nearest(Arrays.asList(HUB_POSITION));
+    Transform2d posDifference = hubPosition.minus(fieldRelativeShooter);
     return Math.hypot(posDifference.getX(), posDifference.getY());
   }
 

@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.subsystems.superstructure.SuperstructureConstants.feederMotorReduction;
 import static frc.robot.subsystems.superstructure.SuperstructureConstants.launcherMotorReduction;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -21,6 +22,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.util.FuelVelocity;
+import java.util.Arrays;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
@@ -77,6 +79,8 @@ public class SuperstructureIOSim implements SuperstructureIO {
     // feederAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
 
     tickCount++;
+    Pose2d hubPosition =
+        driveTrain.getSimulatedDriveTrainPose().nearest(Arrays.asList(FuelVelocity.HUB_POSITION));
 
     if (speed == SuperstructureConstants.intakingFeederSpeed) {
       intakeSimulation.startIntake();
@@ -116,8 +120,8 @@ public class SuperstructureIOSim implements SuperstructureIO {
                   () ->
                       FieldMirroringUtils.toCurrentAllianceTranslation(
                           new Translation3d(
-                              FuelVelocity.HUB_POSITION.getTranslation().getX(),
-                              FuelVelocity.HUB_POSITION.getTranslation().getY(),
+                              hubPosition.getTranslation().getX(),
+                              hubPosition.getTranslation().getY(),
                               FuelVelocity.HUB_HEIGHT)))
               // Set the tolerance
               .withTargetTolerance(
@@ -184,8 +188,8 @@ public class SuperstructureIOSim implements SuperstructureIO {
                   () ->
                       FieldMirroringUtils.toCurrentAllianceTranslation(
                           new Translation3d(
-                              FuelVelocity.HUB_POSITION.getTranslation().getX(),
-                              FuelVelocity.HUB_POSITION.getTranslation().getY(),
+                              hubPosition.getTranslation().getX(),
+                              hubPosition.getTranslation().getY(),
                               FuelVelocity.HUB_HEIGHT)))
               // Set the tolerance
               .withTargetTolerance(

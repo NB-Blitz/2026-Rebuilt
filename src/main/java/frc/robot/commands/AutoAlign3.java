@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.FuelVelocity;
+import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
 public class AutoAlign3 extends InstantCommand {
@@ -58,8 +59,9 @@ public class AutoAlign3 extends InstantCommand {
 
     double maxSpeedTheta = Math.abs(maximumSpeeds.omegaRadiansPerSecond);
 
-    double yDif = driveRef.getPose().getY() - FuelVelocity.HUB_POSITION.getY();
-    double xDif = driveRef.getPose().getX() - FuelVelocity.HUB_POSITION.getX();
+    Pose2d hubPosition = driveRef.getPose().nearest(Arrays.asList(FuelVelocity.HUB_POSITION));
+    double yDif = driveRef.getPose().getY() - hubPosition.getY();
+    double xDif = driveRef.getPose().getX() - hubPosition.getX();
     double calcTheta = Math.atan2(yDif, xDif);
 
     Pose2d fieldRelativeTarget =
