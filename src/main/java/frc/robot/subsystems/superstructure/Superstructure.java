@@ -64,7 +64,7 @@ public class Superstructure extends SubsystemBase {
                 () -> {
                   io.setFeederSpeed(launchingFeederSpeed);
                   io.setLauncherSpeed(launchingLauncherSpeed);
-                  io.setIntakeSpeed(launchingLauncherSpeed * 1.5);
+                  io.setIntakeSpeed(launchingIntakeSpeed);
                 }))
         .finallyDo(
             () -> {
