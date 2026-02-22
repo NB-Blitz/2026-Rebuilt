@@ -20,6 +20,7 @@ public class AutoAlign extends InstantCommand {
   private List<Pose2d> tagPoseList = new ArrayList<>();
   private Transform2d[] offsetFromTag;
   private int offsetIndex = 0;
+  private boolean ignoreRotation;
 
   private ChassisSpeeds speeds = new ChassisSpeeds();
 
@@ -29,13 +30,13 @@ public class AutoAlign extends InstantCommand {
 
   private boolean aligned = false;
 
-  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 2);
-  private Translation3d goalErrors = new Translation3d(0.125, 0.125, Math.PI / 90);
+  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(3.0, 3.0, Math.PI);
+  private Translation3d goalErrors = new Translation3d(0.125, 0.075, Math.PI / 90);
 
   private Pose2d cachedTarget = null;
   private Pose2d cachedTag = null;
 
-  public AutoAlign(Drive drive, int[] Tags, Transform2d[] offsetPose2d) {
+  public AutoAlign(Drive drive, int[] Tags, Transform2d[] offsetPose2d, boolean ignoreRotation) {
     driveRef = drive;
     for (int tagId : Tags) {
       Optional<Pose3d> tagPose = VisionConstants.aprilTagLayout.getTagPose(tagId);
@@ -44,6 +45,7 @@ public class AutoAlign extends InstantCommand {
       }
     }
     offsetFromTag = offsetPose2d;
+    this.ignoreRotation = ignoreRotation;
   }
 
   @Override
@@ -111,6 +113,10 @@ public class AutoAlign extends InstantCommand {
     }
 
     if (Math.abs(offsetPose.getRotation().getRadians()) < goalErrors.getZ()) {
+      thetaAlignSpeed = 0.0;
+    }
+
+    if (ignoreRotation == true) {
       thetaAlignSpeed = 0.0;
     }
 

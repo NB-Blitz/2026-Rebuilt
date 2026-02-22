@@ -62,7 +62,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final boolean useXboxControllerDrive = true;
-  private final boolean useSecondController = false;
+  private final boolean useSecondController = true;
   private final boolean useManipulator = true;
 
   // Controllers
@@ -219,8 +219,24 @@ public class RobotContainer {
               () -> -1 * driveXboxController.getRightX(),
               () -> 1)); // 0.5 * (1 + -driveXboxController.getRightTriggerAxis())));
 
-      // Switch to X pattern when X button is pressed
-      driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+      // Align to hub positions
+      driveXboxController
+          .a()
+          .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign, true));
+      driveXboxController
+          .leftBumper()
+          .whileTrue(new AutoAlign(drive, Constants.depotTags, Constants.depotAlign, false));
+      driveXboxController
+          .rightBumper()
+          .whileTrue(new AutoAlign(drive, Constants.depotTags, Constants.ejectAlign, false));
+      driveXboxController
+          .rightStick()
+          .whileTrue(
+              new AutoAlign3(
+                  drive,
+                  () -> -1 * driveXboxController.getLeftY(),
+                  () -> -1 * driveXboxController.getLeftX()));
+      // new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
 
       // Reset gyro / odometry
       final Runnable resetGyro =
@@ -265,10 +281,10 @@ public class RobotContainer {
       // Align to hub
       joystick
           .button(6)
-          .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign));
+          .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign, true));
       joystick
           .button(5)
-          .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign));
+          .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign, false));
       /* joystick
       .button(8)
       .whileTrue(
@@ -281,19 +297,6 @@ public class RobotContainer {
   }
 
   private void manipulatorButtonBindings(CommandXboxController controller) {
-    // Align to hub positions
-    controller
-        .rightBumper()
-        .whileTrue(new AutoAlign(drive, Constants.trenchTags, Constants.trenchAlign));
-    controller
-        .leftBumper()
-        .whileTrue(new AutoAlign(drive, Constants.depotTags, Constants.depotAlign));
-    controller
-        .y()
-        .whileTrue(
-            new AutoAlign3(
-                drive, () -> -1 * controller.getLeftY(), () -> -1 * controller.getLeftX()));
-    // new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
 
     controller.rightTrigger().whileTrue(manipulator.launch());
     controller.leftTrigger().whileTrue(manipulator.intake());
