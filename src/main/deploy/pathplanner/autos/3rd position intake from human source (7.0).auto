@@ -7,31 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": " Path 2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoAlign"
+            "pathName": "7.1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "path 3"
+            "pathName": "7.2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "path 1"
+            "pathName": "7.3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "path 4"
+            "pathName": "7.4"
           }
         }
       ]
