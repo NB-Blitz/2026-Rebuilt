@@ -11,12 +11,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "AutoAlign"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "path 3"
