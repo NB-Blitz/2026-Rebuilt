@@ -20,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlign;
-import frc.robot.commands.AutoAlign2;
 import frc.robot.commands.AutoAlign3;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.Intake;
+import frc.robot.commands.Shoot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -198,8 +199,9 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    NamedCommands.registerCommand("AutoAlign", new AutoAlign2(drive));
-    NamedCommands.registerCommand("Launch", manipulator.launch());
+    // NamedCommands.registerCommand("AutoAlign", new AutoAlign2(drive));
+    NamedCommands.registerCommand("Intake", new Intake(6, manipulator));
+    NamedCommands.registerCommand("Shoot", new Shoot(6, manipulator));
   }
 
   /**
