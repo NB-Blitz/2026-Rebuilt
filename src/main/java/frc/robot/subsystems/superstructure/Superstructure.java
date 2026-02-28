@@ -8,7 +8,7 @@
 package frc.robot.subsystems.superstructure;
 
 import static frc.robot.subsystems.superstructure.SuperstructureConstants.*;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -16,16 +16,19 @@ import org.littletonrobotics.junction.Logger;
 public class Superstructure extends SubsystemBase {
   private final SuperstructureIO io;
   private final SuperstructureIOInputsAutoLogged inputs = new SuperstructureIOInputsAutoLogged();
-
+  private double launchingSpeed; 
   public Superstructure(SuperstructureIO io) {
     this.io = io;
+    SmartDashboard.putNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
   }
-
+  
   @Override
   public void periodic() {
+    launchingSpeed = SmartDashboard.getNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
     io.updateInputs(inputs);
     Logger.processInputs("Superstructure", inputs);
   }
+  
 
   /** Set the rollers to the values for intaking. */
   public Command intake() {
@@ -56,14 +59,14 @@ public class Superstructure extends SubsystemBase {
   /** Set the rollers to the values for launching. Spins up before feeding fuel. */
   public Command launch() {
     return run(() -> {
-          io.setLauncherSpeed(launchingLauncherSpeed);
+          io.setLauncherSpeed(launchingSpeed);
         })
         .withTimeout(spinUpSeconds)
         .andThen(
             run(
                 () -> {
                   io.setFeederSpeed(launchingFeederSpeed);
-                  io.setLauncherSpeed(launchingLauncherSpeed);
+                  io.setLauncherSpeed(launchingSpeed);
                   io.setIntakeSpeed(launchingIntakeSpeed);
                 }))
         .finallyDo(
