@@ -33,7 +33,7 @@ public class FlexConstants {
   // Drive motor configuration
   public static final boolean driveInverted = true;
   public static final int driveMotorCurrentLimit = 60;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(2);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.975); // 2
   public static final double driveMotorReduction =
       5.14; // ThriftyBot with 14 pinion teeth and 16 spur teeth
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);

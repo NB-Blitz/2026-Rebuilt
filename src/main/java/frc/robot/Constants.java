@@ -30,7 +30,7 @@ public final class Constants {
       new Transform2d[] {new Transform2d(1, 1, Rotation2d.fromDegrees(225.0))};
   public static final Transform2d[] trenchAlign =
       new Transform2d[] {
-        new Transform2d(1.2, 0, Rotation2d.fromDegrees(180.0)),
+        new Transform2d(1.1, 0, Rotation2d.fromDegrees(180.0)),
         new Transform2d(-1.7, 0, Rotation2d.fromDegrees(180.0))
       };
   public static final int[] trenchTags = {1, 6, 7, 12, 17, 22, 23, 28};
@@ -48,9 +48,9 @@ public final class Constants {
       new Transform2d[] {new Transform2d(0.5, 0, Rotation2d.fromDegrees(180.0))};
   public static final int[] depotTags = {13, 29};
 
-  public static final PIDController xController = new PIDController(4.75, 0, 0);
-  public static final PIDController yController = new PIDController(4.75, 0, 0);
-  public static final PIDController thetaController = new PIDController(5.75, 0, 0);
+  public static final PIDController xController = new PIDController(4.5, 0, 0); // 4.75
+  public static final PIDController yController = new PIDController(4.5, 0, 0); // 4.75
+  public static final PIDController thetaController = new PIDController(5.5, 0, 0); // 5.75
 
   public static enum Mode {
     /** Running on a real robot. */
