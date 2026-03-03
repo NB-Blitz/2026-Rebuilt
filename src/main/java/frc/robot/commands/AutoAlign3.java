@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.util.FuelVelocity;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
@@ -30,14 +31,19 @@ public class AutoAlign3 extends InstantCommand {
   private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 2);
   private Translation3d goalErrors = new Translation3d(0.05, 0.05, Math.PI / 720);
 
-  public AutoAlign3(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+  private Superstructure superstructure;
+
+  public AutoAlign3(Drive drive, Superstructure superstructure, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     driveRef = drive;
+    this.superstructure = superstructure;
     xJoystick = xSupplier;
     yJoystick = ySupplier;
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    superstructure.useCalcVelocity = true;
+  }
 
   @Override
   public void execute() {
@@ -45,7 +51,9 @@ public class AutoAlign3 extends InstantCommand {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    superstructure.useCalcVelocity = false;
+  }
 
   @Override
   public boolean isFinished() {

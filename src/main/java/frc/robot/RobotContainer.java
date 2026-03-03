@@ -43,6 +43,9 @@ import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.FuelVelocity;
 import frc.robot.util.LEDStrip;
+
+import java.util.function.Supplier;
+
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -119,7 +122,10 @@ public class RobotContainer {
         // new VisionIOPhotonVision(
         //    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
         if (useManipulator) {
-          manipulator = new Superstructure(new SuperstructureIOSpark());
+          manipulator = new Superstructure(
+              new SuperstructureIOSpark(),
+              () -> drive.getPose()
+          );
         } else {
           manipulator = null;
         }
@@ -152,7 +158,10 @@ public class RobotContainer {
                     VisionConstants.camera1Name,
                     VisionConstants.robotToCamera1,
                     driveSimulation::getSimulatedDriveTrainPose));
-        manipulator = new Superstructure(new SuperstructureIOSim(driveSimulation));
+        manipulator = new Superstructure(
+            new SuperstructureIOSim(driveSimulation),
+            () -> drive.getPose()
+        );
         break;
 
       default:
@@ -236,6 +245,7 @@ public class RobotContainer {
           .whileTrue(
               new AutoAlign3(
                   drive,
+                  manipulator,
                   () -> -1 * driveXboxController.getLeftY(),
                   () -> -1 * driveXboxController.getLeftX()));
       // new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
@@ -256,12 +266,12 @@ public class RobotContainer {
       // Switch to X pattern when X button is pressed
       driveXboxController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-      final Runnable increaseAdjustment = () -> FuelVelocity.adjustment += 0.1;
-      final Runnable decreaseAdjustment = () -> FuelVelocity.adjustment -= 0.1;
+      final Runnable increaseAdjustment = () -> FuelVelocity.increaseAdjustment();
+      final Runnable decreaseAdjustment = () -> FuelVelocity.decreaseAdjustment();
       driveXboxController.povRight().onTrue(Commands.runOnce(increaseAdjustment));
       driveXboxController.povLeft().onTrue(Commands.runOnce(decreaseAdjustment));
 
-      Logger.recordOutput("FuelVelocity/ShootingAdjustment", FuelVelocity.adjustment);
+      Logger.recordOutput("FuelVelocity/ShootingAdjustment", FuelVelocity.getAdjustment());
 
     } else {
       drive.setDefaultCommand(

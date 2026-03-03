@@ -12,15 +12,23 @@ import static frc.robot.subsystems.superstructure.SuperstructureConstants.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.FuelVelocity;
+import edu.wpi.first.math.MathUtil;
+
 import org.littletonrobotics.junction.Logger;
+import java.util.function.Supplier;
+import edu.wpi.first.math.geometry.Pose2d;
 
 public class Superstructure extends SubsystemBase {
   private final SuperstructureIO io;
   private final SuperstructureIOInputsAutoLogged inputs = new SuperstructureIOInputsAutoLogged();
   private double launchingSpeed;
+  public boolean useCalcVelocity = false;
+  private Supplier<Pose2d> drivePose;
 
-  public Superstructure(SuperstructureIO io) {
+  public Superstructure(SuperstructureIO io, Supplier<Pose2d> drivePose) {
     this.io = io;
+    this.drivePose = drivePose;
     SmartDashboard.putNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
   }
 
@@ -60,7 +68,40 @@ public class Superstructure extends SubsystemBase {
 
   /** Set the rollers to the values for launching. Spins up before feeding fuel. */
   public Command launch() {
-    return run(() -> {
+
+    if(useCalcVelocity == true) { //use calculated velocity
+
+      double speed = FuelVelocity.calcFixedLaunchVelocity(drivePose.get());
+
+      //do some math to convert to rpm
+      speed = speed * 2 / FuelVelocity.WHEEL_CIRCUMFERENCE;
+
+      //clamp it
+      speed = MathUtil.clamp(speed, FuelVelocity.MIN_RPM, FuelVelocity.MAX_RPM);
+
+      final double SPEED = speed;
+
+      return run(() -> {
+          io.setLauncherSpeed(SPEED);
+        })
+        .withTimeout(spinUpSeconds)
+        .andThen(
+            run(
+                () -> {
+                  io.setFeederSpeed(launchingFeederSpeed);
+                  io.setLauncherSpeed(SPEED);
+                  io.setIntakeSpeed(launchingIntakeSpeed);
+                }))
+        .finallyDo(
+            () -> {
+              io.setFeederSpeed(0.0);
+              io.setLauncherSpeed(0.0);
+              io.setIntakeSpeed(0);
+            });
+
+    } else { //run at a constant speed
+      
+      return run(() -> {
           io.setLauncherSpeed(launchingSpeed);
         })
         .withTimeout(spinUpSeconds)
@@ -77,5 +118,6 @@ public class Superstructure extends SubsystemBase {
               io.setLauncherSpeed(0.0);
               io.setIntakeSpeed(0);
             });
+    }
   }
 }
