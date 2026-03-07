@@ -21,7 +21,7 @@ public class SuperstructureConstants {
   public static final double intakeMotorReduction = 2.0; // FIXME
   public static final int intakeCurrentLimit = 60; // FIXME
 
-  public static final double intakingFeederSpeed = -775.0; // -1.0;
+  public static final double intakingFeederSpeed = -776.0; // -1.0;
   public static final double intakingIntakeSpeed = 2000.0; // 10.0 / 12.0;
   public static final double launchingFeederSpeed = 775.0; // 9.0 / 12.0;
   public static final double launchingLauncherSpeed = 3600.0; // 10.6 / 18.0;
