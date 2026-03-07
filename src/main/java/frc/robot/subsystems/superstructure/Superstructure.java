@@ -9,21 +9,20 @@ package frc.robot.subsystems.superstructure;
 
 import static frc.robot.subsystems.superstructure.SuperstructureConstants.*;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.FuelVelocity;
-import edu.wpi.first.math.MathUtil;
-
-import org.littletonrobotics.junction.Logger;
 import java.util.function.Supplier;
-import edu.wpi.first.math.geometry.Pose2d;
+import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
   private final SuperstructureIO io;
   private final SuperstructureIOInputsAutoLogged inputs = new SuperstructureIOInputsAutoLogged();
   private double launchingSpeed;
-  public boolean useCalcVelocity = false;
+  public boolean useCalcVelocity = true;
   private Supplier<Pose2d> drivePose;
 
   public Superstructure(SuperstructureIO io, Supplier<Pose2d> drivePose) {
@@ -69,55 +68,70 @@ public class Superstructure extends SubsystemBase {
   /** Set the rollers to the values for launching. Spins up before feeding fuel. */
   public Command launch() {
 
-    if(useCalcVelocity == true) { //use calculated velocity
-
-      double speed = FuelVelocity.calcFixedLaunchVelocity(drivePose.get());
-
-      //do some math to convert to rpm
-      speed = speed * 2 / FuelVelocity.WHEEL_CIRCUMFERENCE;
-
-      //clamp it
-      speed = MathUtil.clamp(speed, FuelVelocity.MIN_RPM, FuelVelocity.MAX_RPM);
-
-      final double SPEED = speed;
+    if (useCalcVelocity == true) { // use calculated velocity
 
       return run(() -> {
-          io.setLauncherSpeed(SPEED);
-        })
-        .withTimeout(spinUpSeconds)
-        .andThen(
-            run(
-                () -> {
-                  io.setFeederSpeed(launchingFeederSpeed);
-                  io.setLauncherSpeed(SPEED);
-                  io.setIntakeSpeed(launchingIntakeSpeed);
-                }))
-        .finallyDo(
-            () -> {
-              io.setFeederSpeed(0.0);
-              io.setLauncherSpeed(0.0);
-              io.setIntakeSpeed(0);
-            });
+            double startSpeed = FuelVelocity.calcFixedLaunchVelocity(drivePose.get());
 
-    } else { //run at a constant speed
-      
+            // do some math to convert to rpm
+            startSpeed = startSpeed * 2 * 60.0 / FuelVelocity.WHEEL_CIRCUMFERENCE;
+            startSpeed = calcRPMToRealRPM(startSpeed);
+
+            // clamp it
+            startSpeed = MathUtil.clamp(startSpeed, FuelVelocity.MIN_RPM, FuelVelocity.MAX_RPM);
+
+            final double START_SPEED = startSpeed;
+            io.setLauncherSpeed(START_SPEED);
+          })
+          .withTimeout(spinUpSeconds)
+          .andThen(
+              run(
+                  () -> {
+                    double speed = FuelVelocity.calcFixedLaunchVelocity(drivePose.get());
+
+                    // do some math to convert to rpm
+                    speed = speed * 2 * 60.0 / FuelVelocity.WHEEL_CIRCUMFERENCE;
+                    speed = calcRPMToRealRPM(speed);
+
+                    // clamp it
+                    speed = MathUtil.clamp(speed, FuelVelocity.MIN_RPM, FuelVelocity.MAX_RPM);
+
+                    final double SPEED = speed;
+
+                    io.setFeederSpeed(launchingFeederSpeed);
+                    io.setLauncherSpeed(SPEED);
+                    io.setIntakeSpeed(launchingIntakeSpeed);
+                  }))
+          .finallyDo(
+              () -> {
+                io.setFeederSpeed(0.0);
+                io.setLauncherSpeed(0.0);
+                io.setIntakeSpeed(0);
+              });
+
+    } else { // run at a constant speed
+
       return run(() -> {
-          io.setLauncherSpeed(launchingSpeed);
-        })
-        .withTimeout(spinUpSeconds)
-        .andThen(
-            run(
-                () -> {
-                  io.setFeederSpeed(launchingFeederSpeed);
-                  io.setLauncherSpeed(launchingSpeed);
-                  io.setIntakeSpeed(launchingIntakeSpeed);
-                }))
-        .finallyDo(
-            () -> {
-              io.setFeederSpeed(0.0);
-              io.setLauncherSpeed(0.0);
-              io.setIntakeSpeed(0);
-            });
+            io.setLauncherSpeed(launchingSpeed);
+          })
+          .withTimeout(spinUpSeconds)
+          .andThen(
+              run(
+                  () -> {
+                    io.setFeederSpeed(launchingFeederSpeed);
+                    io.setLauncherSpeed(launchingSpeed);
+                    io.setIntakeSpeed(launchingIntakeSpeed);
+                  }))
+          .finallyDo(
+              () -> {
+                io.setFeederSpeed(0.0);
+                io.setLauncherSpeed(0.0);
+                io.setIntakeSpeed(0);
+              });
     }
+  }
+
+  public static double calcRPMToRealRPM(double calculatedRPM) {
+    return calculatedRPM * 1.49 + 62.9;
   }
 }

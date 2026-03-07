@@ -43,9 +43,6 @@ import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.FuelVelocity;
 import frc.robot.util.LEDStrip;
-
-import java.util.function.Supplier;
-
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -66,7 +63,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final boolean useXboxControllerDrive = true;
-  private final boolean useSecondController = true;
+  private final boolean useSecondController = false;
   private final boolean useManipulator = true;
 
   // Controllers
@@ -122,10 +119,7 @@ public class RobotContainer {
         // new VisionIOPhotonVision(
         //    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
         if (useManipulator) {
-          manipulator = new Superstructure(
-              new SuperstructureIOSpark(),
-              () -> drive.getPose()
-          );
+          manipulator = new Superstructure(new SuperstructureIOSpark(), () -> drive.getPose());
         } else {
           manipulator = null;
         }
@@ -158,10 +152,8 @@ public class RobotContainer {
                     VisionConstants.camera1Name,
                     VisionConstants.robotToCamera1,
                     driveSimulation::getSimulatedDriveTrainPose));
-        manipulator = new Superstructure(
-            new SuperstructureIOSim(driveSimulation),
-            () -> drive.getPose()
-        );
+        manipulator =
+            new Superstructure(new SuperstructureIOSim(driveSimulation), () -> drive.getPose());
         break;
 
       default:

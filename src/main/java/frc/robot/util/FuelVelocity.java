@@ -6,15 +6,12 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import java.util.Arrays;
-
-import javax.annotation.processing.Generated;
-
 import org.littletonrobotics.junction.Logger;
 
 public class FuelVelocity {
 
-  public static final double WHEEL_CIRCUMFERENCE = Double.NEGATIVE_INFINITY;
-  public static final double MAX_RPM = 4600.0;
+  public static final double WHEEL_CIRCUMFERENCE = Units.inchesToMeters(4) * Math.PI;
+  public static final double MAX_RPM = 3600.0; // 4600.0 for competition, 3600.0 for cafeteria
   public static final double MIN_RPM = 2800.0;
 
   public static final double HUB_HEIGHT = 72.0; // in inches
@@ -48,15 +45,19 @@ public class FuelVelocity {
   public static final Transform2d INTAKE_POSITION_INV =
       new Transform2d(Units.inchesToMeters(-9), 0.0, new Rotation2d(Math.PI));
 
-  
   private static double adjustment = 0.0; // in meters, used to manually shoot further or closer
-  private static boolean useAdjustment = false;
+  private static boolean useAdjustment = true;
+
   public static double getAdjustment() {
     return adjustment;
-  } public static void increaseAdjustment() {
+  }
+
+  public static void increaseAdjustment() {
     adjustment += 0.1;
     Logger.recordOutput("FuelVelocity/Adjustment", adjustment);
-  } public static void decreaseAdjustment() {
+  }
+
+  public static void decreaseAdjustment() {
     adjustment -= 0.1;
     Logger.recordOutput("FuelVelocity/Adjustment", adjustment);
   }
@@ -105,7 +106,7 @@ public class FuelVelocity {
 
     Logger.recordOutput("FuelVelocity/DistanceFromHub", distanceFromHub);
 
-    if(useAdjustment) {
+    if (useAdjustment) {
       distanceFromHub += adjustment;
     }
 
