@@ -38,6 +38,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.FuelVelocity;
 import frc.robot.util.LEDStrip;
@@ -113,9 +114,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
-        // new VisionIOPhotonVision(
-        //    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                new VisionIOPhotonVision(
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
         if (useManipulator) {
           manipulator = new Superstructure(new SuperstructureIOSpark(), () -> drive.getPose());
         } else {
@@ -177,7 +178,9 @@ public class RobotContainer {
     demoModeToggle.onFalse(Commands.runOnce(() -> drive.demoMode = false, drive));
 
     NamedCommands.registerCommand("Intake", manipulator.intake().withTimeout(4));
-    NamedCommands.registerCommand("Shoot", manipulator.launch().withTimeout(5));
+    NamedCommands.registerCommand("Shoot", manipulator.launch().withTimeout(6));
+    NamedCommands.registerCommand(
+        "AutoAlign", new AutoAlign3(drive, manipulator, () -> 0, () -> 0).withTimeout(2));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

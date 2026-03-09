@@ -74,8 +74,8 @@ public class Superstructure extends SubsystemBase {
             double startSpeed = FuelVelocity.calcFixedLaunchVelocity(drivePose.get());
 
             // do some math to convert to rpm
-            startSpeed = startSpeed * 2 * 60.0 / FuelVelocity.WHEEL_CIRCUMFERENCE;
-            startSpeed = calcRPMToRealRPM(startSpeed);
+            // startSpeed = startSpeed * 2 * 60.0 / FuelVelocity.WHEEL_CIRCUMFERENCE;
+            startSpeed = calcVelToRealRPM(startSpeed);
 
             // clamp it
             startSpeed = MathUtil.clamp(startSpeed, FuelVelocity.MIN_RPM, FuelVelocity.MAX_RPM);
@@ -90,8 +90,8 @@ public class Superstructure extends SubsystemBase {
                     double speed = FuelVelocity.calcFixedLaunchVelocity(drivePose.get());
 
                     // do some math to convert to rpm
-                    speed = speed * 2 * 60.0 / FuelVelocity.WHEEL_CIRCUMFERENCE;
-                    speed = calcRPMToRealRPM(speed);
+                    // speed = speed * 2 * 60.0 / FuelVelocity.WHEEL_CIRCUMFERENCE;
+                    speed = calcVelToRealRPM(speed);
 
                     // clamp it
                     speed = MathUtil.clamp(speed, FuelVelocity.MIN_RPM, FuelVelocity.MAX_RPM);
@@ -131,7 +131,7 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public static double calcRPMToRealRPM(double calculatedRPM) {
-    return calculatedRPM * 1.49 + 62.9;
+  public static double calcVelToRealRPM(double calculatedVel) {
+    return calculatedVel * 560.0 + 62.9;
   }
 }

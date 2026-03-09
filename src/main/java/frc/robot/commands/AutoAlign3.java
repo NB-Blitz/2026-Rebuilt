@@ -33,7 +33,11 @@ public class AutoAlign3 extends InstantCommand {
 
   private Superstructure superstructure;
 
-  public AutoAlign3(Drive drive, Superstructure superstructure, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+  public AutoAlign3(
+      Drive drive,
+      Superstructure superstructure,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier) {
     driveRef = drive;
     this.superstructure = superstructure;
     xJoystick = xSupplier;
