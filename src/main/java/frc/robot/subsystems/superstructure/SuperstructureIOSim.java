@@ -234,4 +234,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
     double volts = speed * 12.0;
     // intakeLauncherAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
+
+  @Override
+  public void setSweeperSpeed(double speed) {}
 }

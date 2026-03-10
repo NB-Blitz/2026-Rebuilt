@@ -58,10 +58,12 @@ public class Superstructure extends SubsystemBase {
         () -> {
           io.setFeederSpeed(-intakingFeederSpeed);
           io.setIntakeSpeed(-intakingIntakeSpeed);
+          io.setSweeperSpeed(sweeperSpeed);
         },
         () -> {
           io.setFeederSpeed(0.0);
           io.setIntakeSpeed(0.0);
+          io.setSweeperSpeed(0.0);
         });
   }
 
@@ -101,12 +103,14 @@ public class Superstructure extends SubsystemBase {
                     io.setFeederSpeed(launchingFeederSpeed);
                     io.setLauncherSpeed(SPEED);
                     io.setIntakeSpeed(launchingIntakeSpeed);
+                    io.setSweeperSpeed(sweeperSpeed);
                   }))
           .finallyDo(
               () -> {
                 io.setFeederSpeed(0.0);
                 io.setLauncherSpeed(0.0);
                 io.setIntakeSpeed(0);
+                io.setSweeperSpeed(0.0);
               });
 
     } else { // run at a constant speed
@@ -121,12 +125,14 @@ public class Superstructure extends SubsystemBase {
                     io.setFeederSpeed(launchingFeederSpeed);
                     io.setLauncherSpeed(launchingSpeed);
                     io.setIntakeSpeed(launchingIntakeSpeed);
+                    io.setSweeperSpeed(sweeperSpeed);
                   }))
           .finallyDo(
               () -> {
                 io.setFeederSpeed(0.0);
                 io.setLauncherSpeed(0.0);
                 io.setIntakeSpeed(0);
+                io.setSweeperSpeed(0.0);
               });
     }
   }

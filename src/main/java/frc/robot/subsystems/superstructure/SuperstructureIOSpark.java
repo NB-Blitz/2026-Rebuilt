@@ -18,9 +18,12 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -42,6 +45,8 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   private final SparkClosedLoopController intakeController = intakeMotor.getClosedLoopController();
   private final SparkClosedLoopController feederController = feeder.getClosedLoopController();
   private final SparkClosedLoopController launcherController = launcher.getClosedLoopController();
+
+  private final SparkMax sweeper = new SparkMax(launcherCanId, MotorType.kBrushed);
 
   //   private final double odometryFrequency = 0.0;
   // private final SparkClosedLoopController manipulatorController;
@@ -146,6 +151,40 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             intakeMotor.configure(
                 intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
+
+    var sweeperConfig = new SparkMaxConfig();
+    sweeperConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(sweeperCurrentLimit)
+        .inverted(false)
+        .voltageCompensation(12.0);
+    /*intakeConfig
+        .encoder
+        .positionConversionFactor(1 / sweeperMotorReduction)
+        .velocityConversionFactor(1 / sweeperMotorReduction);*/
+    /*intakeConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        // .pid(intakeKp, 0.0, intakeKd);
+        .pid(intakeKp, 0.0, intakeKd, ClosedLoopSlot.kSlot0)
+        .feedForward
+        .kV(intakeKv);*/
+    // intakeConfig
+    //     .signals
+    //     .primaryEncoderPositionAlwaysOn(true)
+    //     .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+    //     .primaryEncoderVelocityAlwaysOn(true)
+    //     .primaryEncoderVelocityPeriodMs(20)
+    //     .appliedOutputPeriodMs(20)
+    //     .busVoltagePeriodMs(20)
+    //     .outputCurrentPeriodMs(20);
+    tryUntilOk(
+        sweeper,
+        5,
+        () ->
+            sweeper.configure(
+                sweeperConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    
     // Timer.delay(0.1); // FIXME: idk if this is necessary
 
     // set up Spark Flex configuration for the left motor
@@ -230,5 +269,10 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     // launcher.set(speed);
     launcherController.setSetpoint(speed, ControlType.kVelocity);
     Logger.recordOutput("Superstructure/Launcher Target Speed", speed);
+  }
+
+  public void setSweeperSpeed(double speed) {
+    sweeper.set(speed);
+    Logger.recordOutput("Superstructure/Sweeper Target Speed", speed);
   }
 }
