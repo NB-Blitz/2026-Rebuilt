@@ -8,40 +8,56 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.848988095238095,
-        "y": 5.535690476190475
+        "x": 7.881380952380953,
+        "y": 1.6595238095238098
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.7907261904761915,
-        "y": 7.285083333333334
+        "x": 7.211833333333334,
+        "y": 0.8712976190476196
       },
       "prevControl": {
-        "x": 7.443495994132251,
-        "y": 7.192919769803656
+        "x": 7.794904761904762,
+        "y": 1.033261904761905
       },
       "nextControl": {
-        "x": 5.877031956864551,
-        "y": 7.414086415391547
+        "x": 6.160235968106729,
+        "y": 0.5791872398180078
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.2233333333333345,
-        "y": 6.799190476190477
+        "x": 5.1494880952380955,
+        "y": 0.6661428571428576
       },
       "prevControl": {
-        "x": 2.8424309410968203,
-        "y": 7.773074306025729
+        "x": 5.797345238095238,
+        "y": 0.698535714285714
       },
       "nextControl": {
-        "x": 1.6691223796630683,
-        "y": 5.927377890697104
+        "x": 4.802882179262545,
+        "y": 0.6488125613440804
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.0655476190476194,
+        "y": 0.6661428571428576
+      },
+      "prevControl": {
+        "x": 3.616226190476191,
+        "y": 0.63375
+      },
+      "nextControl": {
+        "x": 2.1267851555089896,
+        "y": 0.7213641785274835
       },
       "isLocked": false,
       "linkedName": null
@@ -52,8 +68,8 @@
         "y": 4.132
       },
       "prevControl": {
-        "x": 1.768158767772512,
-        "y": 4.712026066350711
+        "x": 1.7482380952380963,
+        "y": 2.8580595238095237
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,7 +78,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.1676348547717743,
+      "waypointRelativePos": 2.1676348547717743,
       "rotationDegrees": 180.0
     }
   ],
@@ -70,10 +86,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
-    "maxAcceleration": 2.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 360.0,
+    "maxVelocity": 9.0,
+    "maxAcceleration": 10.0,
+    "maxAngularVelocity": 640.0,
+    "maxAngularAcceleration": 460.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
