@@ -25,7 +25,8 @@ public class VisionConstants {
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
-      new Transform3d(0.3, 0.0, 0.12, new Rotation3d(0.0, -Math.PI / 4, 0.0));
+      new Transform3d(Units.inchesToMeters(-10.5), Units.inchesToMeters(6.75), Units.inchesToMeters(19.25), new Rotation3d(0.0, -Math.PI / 4, 0.0));
+      //new measurments in inches: -10.5, 6.75, 19.25
   public static Transform3d robotToCamera1 =
       //new Transform3d(0.222, 0.229, 0.394, new Rotation3d(0.0, 0.0, -Math.PI / 2));
       new Transform3d(Units.inchesToMeters(8.25), Units.inchesToMeters(9), Units.inchesToMeters(15.5625), new Rotation3d(0.0, 0.0, -Math.PI / 2));
