@@ -18,8 +18,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class FlexConstants {
-  public static final double maxSpeedMetersPerSec = Units.inchesToMeters(19.8 * 12); // 6.035
-  public static final double maxAcceleration = 2.0;
+  public static final double maxSpeedMetersPerSec =
+      Units.inchesToMeters(19.8 * 12); // 6.035 (with 4 inch wheels)
+  public static final double maxAcceleration = 6.0;
   public static final double allowedError = 0.05;
   public static final double trackWidth = Units.inchesToMeters(25.0);
   public static final double wheelBase = Units.inchesToMeters(19.0);
@@ -33,7 +34,7 @@ public class FlexConstants {
   // Drive motor configuration
   public static final boolean driveInverted = true;
   public static final int driveMotorCurrentLimit = 60;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(1.975); // 2
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.875); // 2
   public static final double driveMotorReduction =
       5.14; // ThriftyBot with 14 pinion teeth and 16 spur teeth
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
@@ -41,8 +42,8 @@ public class FlexConstants {
   // Drive PID configuration for the robot
   public static final double driveKp = 0.005;
   public static final double driveKd = 0.02;
-  public static final double driveKs = 0.14819;
-  public static final double driveKv = 0.0898;
+  public static final double driveKs = 0.13652;
+  public static final double driveKv = 0.08643;
 
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
