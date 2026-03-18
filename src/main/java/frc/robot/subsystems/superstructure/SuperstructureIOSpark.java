@@ -45,10 +45,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   private final SparkClosedLoopController feederController = feeder.getClosedLoopController();
   private final SparkClosedLoopController launcherController = launcher.getClosedLoopController();
 
-  private final SparkMax sweeper = new SparkMax(launcherCanId, MotorType.kBrushed);
-
-  //   private final double odometryFrequency = 0.0;
-  // private final SparkClosedLoopController manipulatorController;
+  private final SparkMax sweeper = new SparkMax(sweeperCanId, MotorType.kBrushed);
 
   public SuperstructureIOSpark() {
     var feederConfig = new SparkFlexConfig();
@@ -115,8 +112,6 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             launcher.configure(
                 launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    // manipulatorController = launcher.getClosedLoopController();
-
     var intakeConfig = new SparkFlexConfig();
     intakeConfig
         .idleMode(IdleMode.kBrake)
@@ -156,18 +151,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .smartCurrentLimit(sweeperCurrentLimit)
         .inverted(false)
         .voltageCompensation(12.0);
-    /*intakeConfig
-    .encoder
-    .positionConversionFactor(1 / sweeperMotorReduction)
-    .velocityConversionFactor(1 / sweeperMotorReduction);*/
-    /*intakeConfig
-    .closedLoop
-    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    // .pid(intakeKp, 0.0, intakeKd);
-    .pid(intakeKp, 0.0, intakeKd, ClosedLoopSlot.kSlot0)
-    .feedForward
-    .kV(intakeKv);*/
-    // intakeConfig
+    // sweeperConfig
     //     .signals
     //     .primaryEncoderPositionAlwaysOn(true)
     //     .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
@@ -236,8 +220,6 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     Logger.recordOutput("Superstructure/Current Feeder Speed", feederEncoder.getVelocity());
     Logger.recordOutput("Superstructure/Current Intake Speed", intakeEncoder.getVelocity());
     Logger.recordOutput("Superstructure/Current Shooter Speed", launcherEncoder.getVelocity());
-    Logger.recordOutput(
-        "Superstructure/Launcher Is At Setpoint", launcherController.isAtSetpoint());
   }
 
   //   public void setDriveVelocity(double velocityRadPerSec) {
@@ -266,7 +248,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   public void setLauncherSpeed(double speed) {
     // launcher.set(speed);
     launcherController.setSetpoint(speed, ControlType.kVelocity);
-    Logger.recordOutput("Superstructure/Launcher Target Speed", speed);
+    Logger.recordOutput("Superstructure/Shooter Target Speed", speed);
   }
 
   public void setSweeperSpeed(double speed) {

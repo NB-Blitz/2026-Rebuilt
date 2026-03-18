@@ -62,7 +62,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final boolean useXboxControllerDrive = true;
-  private final boolean useSecondController = false;
+  private final boolean useSecondController = true;
   private final boolean useManipulator = true;
 
   // Controllers
@@ -114,7 +114,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation), // );
                 new VisionIOPhotonVision(
                     VisionConstants.camera1Name, VisionConstants.robotToCamera1));
         if (useManipulator) {
@@ -187,9 +187,9 @@ public class RobotContainer {
 
     // Set up SysId routines
     // autoChooser.addOption(
-    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     // autoChooser.addOption(
-    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     // autoChooser.addOption(
     //     "Drive SysId (Quasistatic Forward)",
     //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));

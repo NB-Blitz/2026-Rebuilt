@@ -110,11 +110,12 @@ public class ModuleIOSparkFlex implements ModuleIO {
     driveConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(driveKp, 0.0, driveKd)
+        // .pid(driveKp, 0.0, driveKd);
+        // .feedForward
+        // .kS(driveKs)
+        // .kV(driveKv)
         .maxMotion
-        .maxVelocity(maxSpeedMetersPerSec)
-        .maxAcceleration(maxAcceleration)
-        .allowedClosedLoopError(allowedError);
+        .maxAcceleration(maxAcceleration);
     driveConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)

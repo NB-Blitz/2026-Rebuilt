@@ -35,11 +35,11 @@ public class SuperstructureConstants {
 
   public static final double feederKp = 0.0001;
   public static final double feederKd = 0.0;
-  public static final double feederKv = 0.00122;
+  public static final double feederKv = 0.014; // 0.00122;
   public static final double launcherKp = 0.00002;
   public static final double launcherKd = 0.0;
-  public static final double launcherKv = 0.0001495;
+  public static final double launcherKv = 0.0018; // 0.0001495
   public static final double intakeKp = 0.000075;
   public static final double intakeKd = 0.0;
-  public static final double intakeKv = 0.00035;
+  public static final double intakeKv = 0.0038; // 0.00035;
 }
