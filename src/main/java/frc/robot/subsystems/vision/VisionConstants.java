@@ -27,8 +27,12 @@ public class VisionConstants {
   public static Transform3d robotToCamera0 =
       new Transform3d(0.3, 0.0, 0.12, new Rotation3d(0.0, -Math.PI / 4, 0.0));
   public static Transform3d robotToCamera1 =
-      //new Transform3d(0.222, 0.229, 0.394, new Rotation3d(0.0, 0.0, -Math.PI / 2));
-      new Transform3d(Units.inchesToMeters(8.25), Units.inchesToMeters(9), Units.inchesToMeters(15.5625), new Rotation3d(0.0, 0.0, -Math.PI / 2));
+      // new Transform3d(0.222, 0.229, 0.394, new Rotation3d(0.0, 0.0, -Math.PI / 2));
+      new Transform3d(
+          Units.inchesToMeters(8.25),
+          Units.inchesToMeters(9),
+          Units.inchesToMeters(15.5625),
+          new Rotation3d(0.0, 0.0, -Math.PI / 2));
   // 8.75 in, 9 in, 15.5 in
 
   // Basic filtering thresholds

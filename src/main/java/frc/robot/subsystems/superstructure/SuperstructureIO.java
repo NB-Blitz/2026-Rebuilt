@@ -33,6 +33,6 @@ public interface SuperstructureIO {
   public default void setIntakeSpeed(double speed) {}
 
   public default void setLauncherSpeed(double speed) {}
-  
+
   public default void setSweeperSpeed(double speed) {}
 }

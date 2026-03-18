@@ -18,12 +18,11 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -151,7 +150,6 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             intakeMotor.configure(
                 intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-
     var sweeperConfig = new SparkMaxConfig();
     sweeperConfig
         .idleMode(IdleMode.kBrake)
@@ -159,16 +157,16 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         .inverted(false)
         .voltageCompensation(12.0);
     /*intakeConfig
-        .encoder
-        .positionConversionFactor(1 / sweeperMotorReduction)
-        .velocityConversionFactor(1 / sweeperMotorReduction);*/
+    .encoder
+    .positionConversionFactor(1 / sweeperMotorReduction)
+    .velocityConversionFactor(1 / sweeperMotorReduction);*/
     /*intakeConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        // .pid(intakeKp, 0.0, intakeKd);
-        .pid(intakeKp, 0.0, intakeKd, ClosedLoopSlot.kSlot0)
-        .feedForward
-        .kV(intakeKv);*/
+    .closedLoop
+    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    // .pid(intakeKp, 0.0, intakeKd);
+    .pid(intakeKp, 0.0, intakeKd, ClosedLoopSlot.kSlot0)
+    .feedForward
+    .kV(intakeKv);*/
     // intakeConfig
     //     .signals
     //     .primaryEncoderPositionAlwaysOn(true)
@@ -184,7 +182,7 @@ public class SuperstructureIOSpark implements SuperstructureIO {
         () ->
             sweeper.configure(
                 sweeperConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-    
+
     // Timer.delay(0.1); // FIXME: idk if this is necessary
 
     // set up Spark Flex configuration for the left motor
