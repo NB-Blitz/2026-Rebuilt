@@ -43,7 +43,7 @@ public class FuelVelocity {
 
   // FIXME: This is probably not correct
   public static final Transform2d INTAKE_POSITION_INV =
-      new Transform2d(Units.inchesToMeters(-9), 0.0, new Rotation2d(Math.PI));
+      new Transform2d(Units.inchesToMeters(-20), 0.0, new Rotation2d(Math.PI));
 
   private static double adjustment = 0.0; // in meters, used to manually shoot further or closer
   private static boolean useAdjustment = true;

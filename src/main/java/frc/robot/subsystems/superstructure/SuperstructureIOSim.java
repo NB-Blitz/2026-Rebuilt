@@ -88,7 +88,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
     } else if (speed == 0) {
       intakeSimulation.stopIntake();
     } else if (speed == -SuperstructureConstants.intakingFeederSpeed) { // ejecting
-      if (tickCount >= 5) {
+      if (tickCount >= 20) {
         tickCount = 0;
         if (intakeSimulation.obtainGamePieceFromIntake()) {
 
@@ -108,48 +108,49 @@ public class SuperstructureIOSim implements SuperstructureIO {
                       .getRotation()
                       .rotateBy(FuelVelocity.SHOOTER_POSITION.getRotation()),
                   // Initial height of the flying note
-                  Distance.ofBaseUnits(0.25, Units.Meters),
+                  Distance.ofBaseUnits(0.1, Units.Meters),
                   // The launch speed is proportional to the RPM; assumed to be 16 meters/second at
                   // 6000 RPM
-                  LinearVelocity.ofBaseUnits(1, Units.MetersPerSecond),
+                  LinearVelocity.ofBaseUnits(2, Units.MetersPerSecond),
                   // The angle at which the note is launched
-                  Angle.ofBaseUnits(FuelVelocity.THETA, Units.Radians));
+                  Angle.ofBaseUnits(-Math.PI / 90, Units.Radians));
 
-          fuelOnFly
-              // Set the target center to the Hub of the current alliance
-              .withTargetPosition(
-                  () ->
-                      FieldMirroringUtils.toCurrentAllianceTranslation(
-                          new Translation3d(
-                              hubPosition.getTranslation().getX(),
-                              hubPosition.getTranslation().getY(),
-                              FuelVelocity.HUB_HEIGHT)))
-              // Set the tolerance
-              .withTargetTolerance(
-                  new Translation3d(
-                      FuelVelocity.HUB_DIMENTIONS.getX(), FuelVelocity.HUB_DIMENTIONS.getY(), 12))
-              // Set a callback to run when the note hits the target
-              .withHitTargetCallBack(() -> System.out.println("Made it in the hub"));
+          // fuelOnFly
+          //     // Set the target center to the Hub of the current alliance
+          //     .withTargetPosition(
+          //         () ->
+          //             FieldMirroringUtils.toCurrentAllianceTranslation(
+          //                 new Translation3d(
+          //                     hubPosition.getTranslation().getX(),
+          //                     hubPosition.getTranslation().getY(),
+          //                     FuelVelocity.HUB_HEIGHT)))
+          // Set the tolerance
+          // .withTargetTolerance(
+          //     new Translation3d(
+          //         FuelVelocity.HUB_DIMENTIONS.getX(), FuelVelocity.HUB_DIMENTIONS.getY(), 12))
+          // // Set a callback to run when the note hits the target
+          // .withHitTargetCallBack(() -> System.out.println("Made it in the hub"));
 
-          fuelOnFly
-              // Configure callbacks to visualize the flight trajectory of the projectile
-              .withProjectileTrajectoryDisplayCallBack(
-              // Callback for when the note will eventually hit the target (if configured)
-              (pose3ds) ->
-                  Logger.recordOutput(
-                      "Flywheel/NoteProjectileSuccessfulShot", pose3ds.toArray(Pose3d[]::new)),
-              // Callback for when the note will eventually miss the target, or if no target is
-              // configured
-              (pose3ds) ->
-                  Logger.recordOutput(
-                      "Flywheel/NoteProjectileUnsuccessfulShot", pose3ds.toArray(Pose3d[]::new)));
+          // fuelOnFly
+          //     // Configure callbacks to visualize the flight trajectory of the projectile
+          //     .withProjectileTrajectoryDisplayCallBack(
+          //     // Callback for when the note will eventually hit the target (if configured)
+          //     (pose3ds) ->
+          //         Logger.recordOutput(
+          //             "Flywheel/NoteProjectileSuccessfulShot", pose3ds.toArray(Pose3d[]::new)),
+          //     // Callback for when the note will eventually miss the target, or if no target is
+          //     // configured
+          //     (pose3ds) ->
+          //         Logger.recordOutput(
+          //             "Flywheel/NoteProjectileUnsuccessfulShot",
+          // pose3ds.toArray(Pose3d[]::new)));
 
           fuelOnFly.enableBecomesGamePieceOnFieldAfterTouchGround();
           SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
         }
       }
     } else if (speed == SuperstructureConstants.launchingFeederSpeed) {
-      if (tickCount >= 5) {
+      if (tickCount >= 20) {
         tickCount = 0;
         if (intakeSimulation.obtainGamePieceFromIntake()) {
 
@@ -221,11 +222,11 @@ public class SuperstructureIOSim implements SuperstructureIO {
 
   @Override
   public void setIntakeSpeed(double speed) {
-    if (speed < 0) {
-      intakeSimulation.startIntake();
-    } else if (speed == 0) {
-      intakeSimulation.stopIntake();
-    }
+    // if (speed < 0) {
+    //   intakeSimulation.startIntake();
+    // } else if (speed == 0) {
+    //   intakeSimulation.stopIntake();
+    // }
     // intakeLauncherAppliedVolts = MathUtil.clamp(speed * 12.0, -12.0, 12.0);
   }
 
