@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "AutoAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Shoot"
           }
         },
@@ -39,6 +45,12 @@
           "type": "path",
           "data": {
             "pathName": "path 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAlign"
           }
         },
         {

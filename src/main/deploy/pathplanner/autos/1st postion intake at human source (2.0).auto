@@ -7,30 +7,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 2.1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoAlign"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "path 2.2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "path 2.3"
           }
         },
@@ -49,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 2.4"
+            "pathName": "path 2.2"
           }
         }
       ]

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 5.1"
+            "pathName": " Path 2"
           }
         },
         {
@@ -25,7 +25,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 5.2"
+            "pathName": "path 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Crazy Auto 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]
