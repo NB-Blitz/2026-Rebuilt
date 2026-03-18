@@ -11,6 +11,18 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "AutoAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "8.2"
@@ -26,6 +38,18 @@
           "type": "path",
           "data": {
             "pathName": "8.4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

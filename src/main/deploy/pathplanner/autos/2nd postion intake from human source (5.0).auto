@@ -11,21 +11,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "AutoAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "path 5.2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "path 5.3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "path 5.4"
           }
         }
       ]
