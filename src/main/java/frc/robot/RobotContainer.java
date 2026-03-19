@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlign;
+import frc.robot.commands.AutoAlign2;
 import frc.robot.commands.AutoAlign3;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -179,8 +180,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Intake", manipulator.intake().withTimeout(4));
     NamedCommands.registerCommand("Shoot", manipulator.launch().withTimeout(6));
-    NamedCommands.registerCommand(
-        "AutoAlign", new AutoAlign3(drive, manipulator, () -> 0, () -> 0).withTimeout(2));
+    NamedCommands.registerCommand("AutoAlign", new AutoAlign2(drive));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
