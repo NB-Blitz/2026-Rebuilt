@@ -11,7 +11,7 @@ import org.littletonrobotics.junction.Logger;
 public class FuelVelocity {
 
   public static final double WHEEL_CIRCUMFERENCE = Units.inchesToMeters(4) * Math.PI;
-  public static final double MAX_RPM = 3600.0; // 4600.0 for competition, 3600.0 for cafeteria
+  public static final double MAX_RPM = 4500.0; // 4500.0 for competition, 3600.0 for cafeteria
   public static final double MIN_RPM = 2800.0;
 
   public static final double HUB_HEIGHT = 72.0; // in inches

@@ -203,8 +203,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    // NamedCommands.registerCommand("AutoAlign", new AutoAlign2(drive));
   }
 
   /**

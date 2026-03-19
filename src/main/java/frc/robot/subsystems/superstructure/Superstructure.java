@@ -138,6 +138,6 @@ public class Superstructure extends SubsystemBase {
   }
 
   public static double calcVelToRealRPM(double calculatedVel) {
-    return calculatedVel * 560.0 - 250; // + 62.9;
+    return calculatedVel * 600.0 - 285; // + 62.9;
   }
 }

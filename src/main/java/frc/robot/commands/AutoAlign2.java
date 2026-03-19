@@ -21,8 +21,8 @@ public class AutoAlign2 extends InstantCommand {
 
   private boolean aligned = false;
 
-  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(1.25, 1.25, 1.85);
-  private Translation3d goalErrors = new Translation3d(0.01, 0.01, 0.01);
+  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 3);
+  private Translation3d goalErrors = new Translation3d(0.05, 0.05, Math.PI / 720);
 
   public AutoAlign2(Drive drive) {
     driveRef = drive;
