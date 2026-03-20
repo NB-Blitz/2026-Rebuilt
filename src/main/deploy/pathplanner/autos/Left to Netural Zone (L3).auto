@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 3.1"
+            "pathName": "9.1"
           }
         },
         {
@@ -29,7 +29,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Path 3.3"
+                  "pathName": "9.2"
                 }
               },
               {
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path 3.4"
+            "pathName": "9.3"
           }
         },
         {
@@ -57,12 +57,6 @@
           "type": "named",
           "data": {
             "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "path 3.2"
           }
         }
       ]

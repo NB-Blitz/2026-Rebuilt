@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 4.1"
+            "pathName": "Path 3.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAlign"
           }
         },
         {
@@ -23,7 +29,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "path 4.2"
+                  "pathName": "Path 3.2"
                 }
               },
               {
@@ -38,19 +44,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 4.3"
+            "pathName": "Path 3.3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAlign"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "path 4.4"
           }
         }
       ]

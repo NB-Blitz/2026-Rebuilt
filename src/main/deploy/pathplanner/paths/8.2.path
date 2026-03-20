@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 2.72,
-        "y": 4.024
+        "y": 4.05
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.4151679956581344,
-        "y": 5.2418369485597855
+        "y": 5.267836948559785
       },
       "isLocked": false,
       "linkedName": null
@@ -45,10 +45,10 @@
     "rotation": 179.04515874612778
   },
   "reversed": false,
-  "folder": "8.0 paths",
+  "folder": "M2 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }

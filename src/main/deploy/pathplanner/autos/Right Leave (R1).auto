@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 5.1"
+            "pathName": "Path 5.1"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "path 5.2"
+            "pathName": "Path 5.2"
           }
         }
       ]

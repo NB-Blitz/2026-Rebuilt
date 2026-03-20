@@ -45,10 +45,10 @@
     "rotation": -141.17017509502966
   },
   "reversed": false,
-  "folder": "4.0 paths",
+  "folder": "R2 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 177.99040734783316
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }
