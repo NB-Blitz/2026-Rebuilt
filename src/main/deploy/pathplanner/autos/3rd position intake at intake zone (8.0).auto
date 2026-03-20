@@ -23,21 +23,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "8.2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "8.2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "8.3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "8.4"
           }
         },
         {
