@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "8.1"
+            "pathName": "M2.1"
           }
         },
         {
@@ -29,7 +29,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "8.2"
+                  "pathName": "M2.2"
                 }
               },
               {
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "8.3"
+            "pathName": "M2.3"
           }
         },
         {

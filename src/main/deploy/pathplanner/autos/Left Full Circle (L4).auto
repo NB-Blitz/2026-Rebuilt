@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "9.1"
+            "pathName": "L3.1"
           }
         },
         {
@@ -35,7 +35,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LC.1"
+                  "pathName": "L4.1"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LC.2"
+            "pathName": "L4.2"
           }
         },
         {

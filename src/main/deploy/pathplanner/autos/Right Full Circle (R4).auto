@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R2.1"
+            "pathName": "R4.1"
           }
         },
         {
@@ -27,15 +27,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "R2.2"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R4.2"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R2.3"
+            "pathName": "R4.3"
           }
         },
         {

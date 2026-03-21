@@ -47,6 +47,10 @@ public class SuperstructureIOSpark implements SuperstructureIO {
 
   private final SparkMax sweeper = new SparkMax(sweeperCanId, MotorType.kBrushed);
 
+  private int agitatorCount = 0;
+  private int[] agitatorDir = {1, -1};
+  private int agitatorIndex = 0;
+
   public SuperstructureIOSpark() {
     var feederConfig = new SparkFlexConfig();
     feederConfig
@@ -252,7 +256,14 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   }
 
   public void setSweeperSpeed(double speed) {
-    sweeper.set(speed);
+    agitatorCount++;
+    sweeper.set(speed * agitatorDir[agitatorIndex]);
+    if (agitatorCount % 35 == 0) {
+      agitatorIndex++;
+      if (agitatorIndex > agitatorDir.length - 1) {
+        agitatorIndex = 0;
+      }
+    }
     Logger.recordOutput("Superstructure/Sweeper Target Speed", speed);
   }
 }
