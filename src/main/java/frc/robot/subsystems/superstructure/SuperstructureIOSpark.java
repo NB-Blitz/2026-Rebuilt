@@ -19,10 +19,8 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -45,11 +43,11 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   private final SparkClosedLoopController feederController = feeder.getClosedLoopController();
   private final SparkClosedLoopController launcherController = launcher.getClosedLoopController();
 
-  private final SparkMax sweeper = new SparkMax(sweeperCanId, MotorType.kBrushed);
+  // private final SparkMax sweeper = new SparkMax(sweeperCanId, MotorType.kBrushed);
 
-  private int agitatorCount = 0;
-  private int[] agitatorDir = {1, -1};
-  private int agitatorIndex = 0;
+  // private int agitatorCount = 0;
+  // private int[] agitatorDir = {1, -1};
+  // private int agitatorIndex = 0;
 
   public SuperstructureIOSpark() {
     var feederConfig = new SparkFlexConfig();
@@ -149,12 +147,12 @@ public class SuperstructureIOSpark implements SuperstructureIO {
             intakeMotor.configure(
                 intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    var sweeperConfig = new SparkMaxConfig();
-    sweeperConfig
-        .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(sweeperCurrentLimit)
-        .inverted(false)
-        .voltageCompensation(12.0);
+    // var sweeperConfig = new SparkMaxConfig();
+    // sweeperConfig
+    //     .idleMode(IdleMode.kBrake)
+    //     .smartCurrentLimit(sweeperCurrentLimit)
+    //     .inverted(false)
+    //     .voltageCompensation(12.0);
     // sweeperConfig
     //     .signals
     //     .primaryEncoderPositionAlwaysOn(true)
@@ -164,12 +162,12 @@ public class SuperstructureIOSpark implements SuperstructureIO {
     //     .appliedOutputPeriodMs(20)
     //     .busVoltagePeriodMs(20)
     //     .outputCurrentPeriodMs(20);
-    tryUntilOk(
-        sweeper,
-        5,
-        () ->
-            sweeper.configure(
-                sweeperConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    // tryUntilOk(
+    //     sweeper,
+    //     5,
+    //     () ->
+    //         sweeper.configure(
+    //             sweeperConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // Timer.delay(0.1); // FIXME: idk if this is necessary
 
@@ -256,14 +254,14 @@ public class SuperstructureIOSpark implements SuperstructureIO {
   }
 
   public void setSweeperSpeed(double speed) {
-    agitatorCount++;
-    sweeper.set(speed * agitatorDir[agitatorIndex]);
-    if (agitatorCount % 35 == 0) {
-      agitatorIndex++;
-      if (agitatorIndex > agitatorDir.length - 1) {
-        agitatorIndex = 0;
-      }
-    }
-    Logger.recordOutput("Superstructure/Sweeper Target Speed", speed);
+    // agitatorCount++;
+    // sweeper.set(speed * agitatorDir[agitatorIndex]);
+    // if (agitatorCount % 70 == 0) {
+    //   agitatorIndex++;
+    //   if (agitatorIndex > agitatorDir.length - 1) {
+    //     agitatorIndex = 0;
+    //   }
+    // }
+    // Logger.recordOutput("Superstructure/Sweeper Target Speed", speed);
   }
 }

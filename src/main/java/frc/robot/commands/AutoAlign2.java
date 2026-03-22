@@ -22,7 +22,7 @@ public class AutoAlign2 extends InstantCommand {
   private boolean aligned = false;
 
   private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 3);
-  private Translation3d goalErrors = new Translation3d(0.05, 0.05, Math.PI / 90);
+  private Translation3d goalErrors = new Translation3d(0.05, 0.05, Math.PI / 60);
 
   public AutoAlign2(Drive drive) {
     driveRef = drive;
@@ -41,9 +41,9 @@ public class AutoAlign2 extends InstantCommand {
 
   @Override
   public boolean isFinished() {
-    if (aligned) {
-      // RobotContainer.addAlert(new AlertBody(AlertMode.FULLY_ALIGNED, 0.5));
-    }
+    // if (aligned) {
+    // RobotContainer.addAlert(new AlertBody(AlertMode.FULLY_ALIGNED, 0.5));
+    // }
     return aligned;
   }
 
@@ -69,13 +69,13 @@ public class AutoAlign2 extends InstantCommand {
             -maxSpeedTheta,
             maxSpeedTheta);
 
-    if (Math.abs(offsetPose.getX()) < goalErrors.getX()) {
-      xAlignSpeed = 0.0;
-    }
+    // if (Math.abs(offsetPose.getX()) < goalErrors.getX()) {
+    //   xAlignSpeed = 0.0;
+    // }
 
-    if (Math.abs(offsetPose.getY()) < goalErrors.getY()) {
-      yAlignSpeed = 0.0;
-    }
+    // if (Math.abs(offsetPose.getY()) < goalErrors.getY()) {
+    //   yAlignSpeed = 0.0;
+    // }
 
     if (Math.abs(offsetPose.getRotation().getRadians()) < goalErrors.getZ()) {
       thetaAlignSpeed = 0.0;

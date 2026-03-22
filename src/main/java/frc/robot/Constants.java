@@ -50,7 +50,7 @@ public final class Constants {
 
   public static final PIDController xController = new PIDController(2.75, 0, 0); // 4.75
   public static final PIDController yController = new PIDController(2.75, 0, 0); // 4.75
-  public static final PIDController thetaController = new PIDController(3.5, 0, 0); // 5.75
+  public static final PIDController thetaController = new PIDController(4.0, 0, 0); // 5.75
 
   public static enum Mode {
     /** Running on a real robot. */

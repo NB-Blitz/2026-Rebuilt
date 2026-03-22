@@ -69,7 +69,7 @@
   "folder": "R3 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 88.5679038158355
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
