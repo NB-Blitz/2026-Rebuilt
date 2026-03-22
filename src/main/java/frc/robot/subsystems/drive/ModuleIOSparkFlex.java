@@ -166,11 +166,11 @@ public class ModuleIOSparkFlex implements ModuleIO {
         .absoluteEncoderVelocityPeriodMs(20)
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
-        .outputCurrentPeriodMs(20)
-        .primaryEncoderPositionAlwaysOn(true)
-        .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
-        .primaryEncoderVelocityAlwaysOn(true)
-        .primaryEncoderVelocityPeriodMs(20);
+        .outputCurrentPeriodMs(20);
+    // .primaryEncoderPositionAlwaysOn(true)
+    // .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+    // .primaryEncoderVelocityAlwaysOn(true)
+    // .primaryEncoderVelocityPeriodMs(20);
     tryUntilOk(
         turnSpark,
         5,

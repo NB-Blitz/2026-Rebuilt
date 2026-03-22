@@ -18,7 +18,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class FlexConstants {
-  public static final double maxSpeedMetersPerSec = 5.0;
+  public static final double maxSpeedMetersPerSec = 4.5;
   // Units.inchesToMeters(19.8 * 12); // 6.035 (with 4 inch wheels)
   public static final double maxAcceleration = 4.0;
   public static final double allowedError = 0.05;
@@ -64,8 +64,8 @@ public class FlexConstants {
       absoluteTurnEncoderPositionFactor / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 1.7;
-  public static final double turnKd = 1.8;
+  public static final double turnKp = 1.6;
+  public static final double turnKd = 1.7;
 
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
