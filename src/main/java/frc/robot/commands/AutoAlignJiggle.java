@@ -19,25 +19,23 @@ import java.util.Arrays;
 public class AutoAlignJiggle extends InstantCommand {
   private Drive driveRef;
 
-  private ChassisSpeeds speeds = new ChassisSpeeds();
-
   private PIDController thetaControllerRobot = Constants.thetaController;
 
   private boolean aligned = false;
 
-  private double[][] jiggleStates = {{1,1}, {-1,1}, {-1,-1}, {1,-1}};
-  private int jiggleModulo = 13;
+  private double[][] jiggleStates = {{1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+  private int jiggleModulo = 10;
   private int jiggleIndex = 0;
   private int jiggleCount = 0;
+  private double xIn = 0;
+  private double yIn = 0;
 
   private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 3);
   private Translation3d goalErrors = new Translation3d(0.05, 0.05, Math.PI / 720);
 
   private Superstructure superstructure;
 
-  public AutoAlignJiggle(
-      Drive drive,
-      Superstructure superstructure){
+  public AutoAlignJiggle(Drive drive, Superstructure superstructure) {
     driveRef = drive;
     this.superstructure = superstructure;
   }
@@ -81,18 +79,17 @@ public class AutoAlignJiggle extends InstantCommand {
 
     Pose2d offsetPose = driveRef.getPose().relativeTo(fieldRelativeTarget);
 
-    double xIn = 0;
-    double yIn = 0;
+    jiggleCount++;
 
-    if(jiggleCount % jiggleModulo == 0)
-    {
-      xIn = jiggleStates[jiggleIndex%jiggleStates.length][0];
-      yIn = jiggleStates[jiggleIndex%jiggleStates.length][1];
+    if (jiggleCount % jiggleModulo == 0) {
+      xIn = jiggleStates[jiggleIndex % jiggleStates.length][0];
+      yIn = jiggleStates[jiggleIndex % jiggleStates.length][1];
       jiggleIndex++;
     }
 
-    Translation2d linearVelocity =
-        DriveCommands.getLinearVelocityFromJoysticks(xIn, yIn);
+    System.out.println(xIn + ", " + yIn);
+
+    Translation2d linearVelocity = DriveCommands.getLinearVelocityFromJoysticks(xIn, yIn);
     double thetaAlignSpeed =
         MathUtil.clamp(
             thetaControllerRobot.calculate(offsetPose.getRotation().getRadians()),

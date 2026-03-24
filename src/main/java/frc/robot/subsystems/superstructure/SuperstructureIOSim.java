@@ -232,7 +232,7 @@ public class SuperstructureIOSim implements SuperstructureIO {
 
   @Override
   public void setLauncherSpeed(double speed) {
-    double volts = speed * 12.0;
+    // double volts = speed * 12.0;
     // intakeLauncherAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
 

@@ -22,8 +22,6 @@ public class AutoAlign3 extends InstantCommand {
   private DoubleSupplier xJoystick;
   private DoubleSupplier yJoystick;
 
-  private ChassisSpeeds speeds = new ChassisSpeeds();
-
   private PIDController thetaControllerRobot = Constants.thetaController;
 
   private boolean aligned = false;
@@ -82,6 +80,7 @@ public class AutoAlign3 extends InstantCommand {
     Pose2d offsetPose = driveRef.getPose().relativeTo(fieldRelativeTarget);
 
     Translation2d linearVelocity =
+      
         DriveCommands.getLinearVelocityFromJoysticks(
             xJoystick.getAsDouble(), yJoystick.getAsDouble());
     double thetaAlignSpeed =
