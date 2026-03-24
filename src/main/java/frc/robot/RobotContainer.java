@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.AutoAlign2;
 import frc.robot.commands.AutoAlign3;
+import frc.robot.commands.AutoAlignJiggle;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -239,7 +240,12 @@ public class RobotContainer {
                   manipulator,
                   () -> -1 * driveXboxController.getLeftY(),
                   () -> -1 * driveXboxController.getLeftX()));
-      // new AutoAlign(drive, vision, () -> vision.getAlignTags(1), Constants.centerAlign[0]));
+      driveXboxController
+          .leftStick()
+          .whileTrue(
+              new AutoAlignJiggle(
+                  drive,
+                  manipulator));
 
       // Reset gyro / odometry
       final Runnable resetGyro =
