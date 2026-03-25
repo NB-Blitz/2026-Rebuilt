@@ -13,12 +13,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.AutoAlign2;
 import frc.robot.commands.AutoAlign3;
@@ -41,7 +39,6 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.FuelVelocity;
-import frc.robot.util.LEDStrip;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -71,7 +68,6 @@ public class RobotContainer {
   private final CommandXboxController shootXboxController;
   // private final CommandGenericHID driverStation = new CommandGenericHID(2);
 
-  private final LEDStrip ledStrip = new LEDStrip(9, 58);
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -172,10 +168,10 @@ public class RobotContainer {
         break;
     }
 
-    SmartDashboard.putBoolean("Demo Mode", false);
-    Trigger demoModeToggle = new Trigger(() -> SmartDashboard.getBoolean("Demo Mode", false));
-    demoModeToggle.onTrue(Commands.runOnce(() -> drive.demoMode = true, drive));
-    demoModeToggle.onFalse(Commands.runOnce(() -> drive.demoMode = false, drive));
+    // SmartDashboard.putBoolean("Demo Mode", false);
+    // Trigger demoModeToggle = new Trigger(() -> SmartDashboard.getBoolean("Demo Mode", false));
+    // demoModeToggle.onTrue(Commands.runOnce(() -> drive.demoMode = true, drive));
+    // demoModeToggle.onFalse(Commands.runOnce(() -> drive.demoMode = false, drive));
 
     NamedCommands.registerCommand("Intake", manipulator.intake().withTimeout(4));
     NamedCommands.registerCommand("Shoot", manipulator.launch().withTimeout(6));

@@ -11,7 +11,6 @@ import static frc.robot.subsystems.superstructure.SuperstructureConstants.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.FuelVelocity;
@@ -28,13 +27,13 @@ public class Superstructure extends SubsystemBase {
   public Superstructure(SuperstructureIO io, Supplier<Pose2d> drivePose) {
     this.io = io;
     this.drivePose = drivePose;
-    SmartDashboard.putNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
+    // SmartDashboard.putNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
   }
 
   @Override
   public void periodic() {
-    launchingSpeed =
-        SmartDashboard.getNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
+    // launchingSpeed =
+    //     SmartDashboard.getNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
     io.updateInputs(inputs);
     Logger.processInputs("Superstructure", inputs);
   }
