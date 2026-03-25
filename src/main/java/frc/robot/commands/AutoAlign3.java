@@ -26,6 +26,9 @@ public class AutoAlign3 extends InstantCommand {
 
   private boolean aligned = false;
 
+  public static boolean hubAutoAligning = false;
+  public static double thetaSpeed = 0.0;
+
   private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(6.035, 6.035, Math.PI * 3);
   private Translation3d goalErrors = new Translation3d(0.05, 0.05, Math.PI / 720);
 
@@ -45,6 +48,7 @@ public class AutoAlign3 extends InstantCommand {
   @Override
   public void initialize() {
     superstructure.useCalcVelocity = true;
+    hubAutoAligning = true;
   }
 
   @Override
@@ -55,6 +59,7 @@ public class AutoAlign3 extends InstantCommand {
   @Override
   public void end(boolean interrupted) {
     superstructure.useCalcVelocity = false;
+    hubAutoAligning = false;
   }
 
   @Override
@@ -79,10 +84,15 @@ public class AutoAlign3 extends InstantCommand {
 
     Pose2d offsetPose = driveRef.getPose().relativeTo(fieldRelativeTarget);
 
-    Translation2d linearVelocity =
-      
-        DriveCommands.getLinearVelocityFromJoysticks(
-            xJoystick.getAsDouble(), yJoystick.getAsDouble());
+    Translation2d linearVelocity;
+    if (AutoAlignJiggle.jiggling) {
+      linearVelocity =
+          DriveCommands.getLinearVelocityFromJoysticks(AutoAlignJiggle.xIn, AutoAlignJiggle.yIn);
+    } else {
+      linearVelocity =
+          DriveCommands.getLinearVelocityFromJoysticks(
+              xJoystick.getAsDouble(), yJoystick.getAsDouble());
+    }
     double thetaAlignSpeed =
         MathUtil.clamp(
             thetaControllerRobot.calculate(offsetPose.getRotation().getRadians()),
@@ -108,6 +118,7 @@ public class AutoAlign3 extends InstantCommand {
       thetaAlignSpeed = 0.0;
     }
 
+    thetaSpeed = thetaAlignSpeed;
     speeds = new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, thetaAlignSpeed);
 
     driveRef.runVelocity(speeds);

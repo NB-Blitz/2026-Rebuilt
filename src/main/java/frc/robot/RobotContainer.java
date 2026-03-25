@@ -240,7 +240,7 @@ public class RobotContainer {
                   manipulator,
                   () -> -1 * driveXboxController.getLeftY(),
                   () -> -1 * driveXboxController.getLeftX()));
-      driveXboxController.leftStick().whileTrue(new AutoAlignJiggle(drive, manipulator));
+      driveXboxController.leftStick().whileTrue(new AutoAlignJiggle(drive));
 
       // Reset gyro / odometry
       final Runnable resetGyro =
