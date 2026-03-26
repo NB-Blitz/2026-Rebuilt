@@ -38,6 +38,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.FuelVelocity;
 import org.ironmaple.simulation.SimulatedArena;
@@ -60,7 +61,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final boolean useXboxControllerDrive = true;
-  private final boolean useSecondController = true;
+  private final boolean useSecondController = false;
   private final boolean useManipulator = true;
 
   // Controllers
@@ -111,9 +112,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
-        // new VisionIOPhotonVision(
-        //   VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                new VisionIOPhotonVision(
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
         if (useManipulator) {
           manipulator = new Superstructure(new SuperstructureIOSpark(), () -> drive.getPose());
         } else {
