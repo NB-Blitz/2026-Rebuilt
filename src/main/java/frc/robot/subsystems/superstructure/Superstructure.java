@@ -32,6 +32,7 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
+    launchingSpeed = 5000; //TODO maybe change
     // launchingSpeed =
     //     SmartDashboard.getNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
     io.updateInputs(inputs);
@@ -69,6 +70,7 @@ public class Superstructure extends SubsystemBase {
   /** Set the rollers to the values for launching. Spins up before feeding fuel. */
   public Command launch() {
 
+    /*
     if (useCalcVelocity == true) { // use calculated velocity
 
       return run(() -> {
@@ -134,6 +136,26 @@ public class Superstructure extends SubsystemBase {
                 // io.setSweeperSpeed(0.0);
               });
     }
+    */
+    return run(() -> {
+      io.setLauncherSpeed(launchingSpeed);
+    })
+    .withTimeout(spinUpSeconds)
+    .andThen(
+        run(
+            () -> {
+              io.setFeederSpeed(launchingFeederSpeed);
+              io.setLauncherSpeed(launchingSpeed);
+              io.setIntakeSpeed(launchingIntakeSpeed);
+              // io.setSweeperSpeed(sweeperSpeed);
+            }))
+    .finallyDo(
+        () -> {
+          io.setFeederSpeed(0.0);
+          io.setLauncherSpeed(0.0);
+          io.setIntakeSpeed(0);
+          // io.setSweeperSpeed(0.0);
+        });
   }
 
   public static double calcVelToRealRPM(double calculatedVel) {
