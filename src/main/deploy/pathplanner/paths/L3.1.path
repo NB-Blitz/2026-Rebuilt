@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 127.77568430595456
+    "rotation": 135.0
   },
   "reversed": false,
   "folder": "L3 Paths",
