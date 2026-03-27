@@ -11,8 +11,8 @@ public class AutoAlignJiggle extends InstantCommand {
 
   public static boolean jiggling = false;
 
-  private double[][] jiggleStates = {{0.7, 0.7}, {-0.7, 0.7}, {-0.7, -0.7}, {0.7, -0.7}};
-  private int jiggleModulo = 25;
+  private double[][] jiggleStates = {{0, -0.6}, {0, 0.6}};
+  private int jiggleModulo = 20;
   private int jiggleIndex = 0;
   private int jiggleCount = 0;
 
@@ -28,6 +28,8 @@ public class AutoAlignJiggle extends InstantCommand {
   public void initialize() {
     jiggleCount = 0;
     jiggleIndex = 0;
+    xIn = jiggleStates[0][0];
+    yIn = jiggleStates[0][1];
     jiggling = true;
     // System.out.println("IT HAS BEGUN" + jiggling);
   }
@@ -40,6 +42,8 @@ public class AutoAlignJiggle extends InstantCommand {
   @Override
   public void end(boolean interrupted) {
     jiggling = false;
+    jiggleCount = 0;
+    jiggleIndex = 0;
     // System.out.println("ITS THE END" + jiggling);
   }
 
@@ -55,10 +59,11 @@ public class AutoAlignJiggle extends InstantCommand {
     // System.out.println(jiggleCount + ", " + jiggleIndex + " JIGGLE
     // STUFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
-    if (jiggleCount % jiggleModulo == 0) {
+    if (jiggleCount >= jiggleModulo) {
+      jiggleIndex++;
+      jiggleCount = 0;
       xIn = jiggleStates[jiggleIndex % jiggleStates.length][0];
       yIn = jiggleStates[jiggleIndex % jiggleStates.length][1];
-      jiggleIndex++;
     }
 
     // System.out.println(xIn + ", " + yIn);

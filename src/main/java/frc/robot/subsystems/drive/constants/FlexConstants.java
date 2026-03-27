@@ -41,7 +41,7 @@ public class FlexConstants {
 
   // Drive PID configuration for the robot
   public static final double driveKp = 0.005;
-  public static final double driveKd = 0.02;
+  public static final double driveKd = 0.01;
   public static final double driveKs = 0.13652;
   public static final double driveKv = 0.08643;
 

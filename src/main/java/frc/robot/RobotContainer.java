@@ -61,7 +61,7 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private final boolean useXboxControllerDrive = true;
-  private final boolean useSecondController = false;
+  private final boolean useSecondController = true;
   private final boolean useManipulator = true;
 
   // Controllers
