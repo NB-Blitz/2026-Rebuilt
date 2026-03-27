@@ -15,7 +15,7 @@ public class FuelVelocity {
   public static final double MIN_RPM = 2800.0;
 
   public static final double HUB_HEIGHT = 72.0; // in inches
-  public static final double MAX_HEIGHT = Units.feetToMeters(10.0);
+  public static final double MAX_HEIGHT = Units.feetToMeters(100.0);
   public static final double MAX_VELOCITY = FuelVelocity.calculateMaxVelocty(MAX_HEIGHT);
   public static final double ROBOT_SHOOTER_HEIGHT =
       18.309; // in inches FIXME: get right measurement

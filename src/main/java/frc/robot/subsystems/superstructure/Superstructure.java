@@ -9,7 +9,6 @@ package frc.robot.subsystems.superstructure;
 
 import static frc.robot.subsystems.superstructure.SuperstructureConstants.*;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,7 +31,7 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    launchingSpeed = 5000; //TODO maybe change
+    launchingSpeed = 4500; // TODO maybe change
     // launchingSpeed =
     //     SmartDashboard.getNumber("Shooter RPM", SuperstructureConstants.launchingLauncherSpeed);
     io.updateInputs(inputs);
@@ -138,24 +137,24 @@ public class Superstructure extends SubsystemBase {
     }
     */
     return run(() -> {
-      io.setLauncherSpeed(launchingSpeed);
-    })
-    .withTimeout(spinUpSeconds)
-    .andThen(
-        run(
+          io.setLauncherSpeed(launchingSpeed + FuelVelocity.getAdjustment() * 1000);
+        })
+        .withTimeout(spinUpSeconds)
+        .andThen(
+            run(
+                () -> {
+                  io.setFeederSpeed(launchingFeederSpeed);
+                  io.setLauncherSpeed(launchingSpeed);
+                  io.setIntakeSpeed(launchingIntakeSpeed);
+                  // io.setSweeperSpeed(sweeperSpeed);
+                }))
+        .finallyDo(
             () -> {
-              io.setFeederSpeed(launchingFeederSpeed);
-              io.setLauncherSpeed(launchingSpeed);
-              io.setIntakeSpeed(launchingIntakeSpeed);
-              // io.setSweeperSpeed(sweeperSpeed);
-            }))
-    .finallyDo(
-        () -> {
-          io.setFeederSpeed(0.0);
-          io.setLauncherSpeed(0.0);
-          io.setIntakeSpeed(0);
-          // io.setSweeperSpeed(0.0);
-        });
+              io.setFeederSpeed(0.0);
+              io.setLauncherSpeed(0.0);
+              io.setIntakeSpeed(0);
+              // io.setSweeperSpeed(0.0);
+            });
   }
 
   public static double calcVelToRealRPM(double calculatedVel) {

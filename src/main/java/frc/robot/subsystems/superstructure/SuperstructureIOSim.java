@@ -154,8 +154,8 @@ public class SuperstructureIOSim implements SuperstructureIO {
         tickCount = 0;
         if (intakeSimulation.obtainGamePieceFromIntake()) {
 
-          double launchVelocity =
-              FuelVelocity.calcFixedLaunchVelocity(driveTrain.getSimulatedDriveTrainPose());
+          double launchVelocity = 5 + FuelVelocity.getAdjustment();
+          //    FuelVelocity.calcFixedLaunchVelocity(driveTrain.getSimulatedDriveTrainPose());
           double maxVelocity = FuelVelocity.calculateMaxVelocty(FuelVelocity.MAX_HEIGHT);
 
           RebuiltFuelOnFly fuelOnFly =
