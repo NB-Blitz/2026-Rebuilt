@@ -174,10 +174,10 @@ public class RobotContainer {
     // demoModeToggle.onTrue(Commands.runOnce(() -> drive.demoMode = true, drive));
     // demoModeToggle.onFalse(Commands.runOnce(() -> drive.demoMode = false, drive));
 
-    NamedCommands.registerCommand("Intake", manipulator.intake().withTimeout(4.5));
-    NamedCommands.registerCommand("Shoot", manipulator.launch().withTimeout(6));
+    NamedCommands.registerCommand("Intake", manipulator.intake().withTimeout(2));
+    NamedCommands.registerCommand("Shoot", manipulator.launch().withTimeout(9));
     NamedCommands.registerCommand(
-        "AutoAlign", new AutoAlign3(drive, manipulator, () -> 0, () -> 0).withTimeout(6));
+        "AutoAlign", new AutoAlign3(drive, manipulator, () -> 0, () -> 0).withTimeout(9));
     NamedCommands.registerCommand("Jiggle", new AutoAlignJiggle(drive).withTimeout(1));
 
     // Set up auto routines

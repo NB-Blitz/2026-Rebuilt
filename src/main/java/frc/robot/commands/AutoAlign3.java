@@ -16,6 +16,7 @@ import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.util.FuelVelocity;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class AutoAlign3 extends InstantCommand {
   private Drive driveRef;
@@ -114,7 +115,9 @@ public class AutoAlign3 extends InstantCommand {
                 ? driveRef.getRotation().plus(new Rotation2d(Math.PI))
                 : driveRef.getRotation());
 
-    if (Math.abs(offsetPose.getRotation().getRadians()) < goalErrors.getZ()) {
+    double diff = Math.abs(offsetPose.getRotation().getRadians());
+    Logger.recordOutput("AutoAlign3/Theta Diff", diff);
+    if (diff < goalErrors.getZ()) {
       thetaAlignSpeed = 0.0;
     }
 
