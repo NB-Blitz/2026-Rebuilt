@@ -72,7 +72,7 @@ public class FlexConstants {
   public static final double turnSimD = 0.0;
 
   // PathPlanner configuration
-  public static final double robotMassKg = 55.34;
-  public static final double robotMOI = 6.883;
+  public static final double robotMassKg = 48.04;
+  public static final double robotMOI = 2.55;
   public static final double wheelCOF = 1.0;
 }

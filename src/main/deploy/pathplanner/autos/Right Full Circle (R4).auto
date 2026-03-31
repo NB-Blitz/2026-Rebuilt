@@ -11,7 +11,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Intake 2s"
                 }
               },
               {
@@ -30,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Intake 2s"
                 }
               },
               {
@@ -49,13 +49,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoAlign"
+                  "name": "AutoAlign 9s"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot"
+                  "name": "Shoot 9s"
                 }
               },
               {

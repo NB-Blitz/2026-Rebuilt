@@ -17,13 +17,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoAlign"
+                  "name": "AutoAlign 6s"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot"
+                  "name": "Shoot 6s"
                 }
               },
               {
@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Intake 5s"
                 }
               },
               {
@@ -80,13 +80,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoAlign"
+                  "name": "AutoAlign 6s"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot"
+                  "name": "Shoot 6s"
                 }
               },
               {
