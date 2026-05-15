@@ -13,10 +13,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.AutoAlign2;
 import frc.robot.commands.AutoAlign3;
@@ -170,10 +172,24 @@ public class RobotContainer {
         break;
     }
 
-    // SmartDashboard.putBoolean("Demo Mode", false);
-    // Trigger demoModeToggle = new Trigger(() -> SmartDashboard.getBoolean("Demo Mode", false));
-    // demoModeToggle.onTrue(Commands.runOnce(() -> drive.demoMode = true, drive));
-    // demoModeToggle.onFalse(Commands.runOnce(() -> drive.demoMode = false, drive));
+    SmartDashboard.putBoolean("Demo Mode", false);
+    Trigger demoModeToggle = new Trigger(() -> SmartDashboard.getBoolean("Demo Mode", false));
+    demoModeToggle.onTrue(
+        Commands.runOnce(
+            () -> {
+              drive.demoMode = true;
+              manipulator.demoMode = true;
+            },
+            drive,
+            manipulator));
+    demoModeToggle.onFalse(
+        Commands.runOnce(
+            () -> {
+              drive.demoMode = false;
+              manipulator.demoMode = false;
+            },
+            drive,
+            manipulator));
 
     NamedCommands.registerCommand("Intake", manipulator.intake().withTimeout(4));
     NamedCommands.registerCommand("Shoot", manipulator.launch().withTimeout(6));

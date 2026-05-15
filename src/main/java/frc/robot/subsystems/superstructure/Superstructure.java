@@ -21,6 +21,7 @@ public class Superstructure extends SubsystemBase {
   private final SuperstructureIOInputsAutoLogged inputs = new SuperstructureIOInputsAutoLogged();
   private double launchingSpeed;
   public boolean useCalcVelocity = true;
+  public boolean demoMode = false;
   private Supplier<Pose2d> drivePose;
 
   public Superstructure(SuperstructureIO io, Supplier<Pose2d> drivePose) {
@@ -143,8 +144,12 @@ public class Superstructure extends SubsystemBase {
         .andThen(
             run(
                 () -> {
+                  if (demoMode) {
+                    io.setLauncherSpeed(SuperstructureConstants.launchingLauncherSpeed);
+                  } else {
+                    io.setLauncherSpeed(launchingSpeed);
+                  }
                   io.setFeederSpeed(launchingFeederSpeed);
-                  io.setLauncherSpeed(launchingSpeed);
                   io.setIntakeSpeed(launchingIntakeSpeed);
                   // io.setSweeperSpeed(sweeperSpeed);
                 }))

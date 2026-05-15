@@ -27,7 +27,7 @@ public class SuperstructureConstants {
   public static final double intakingFeederSpeed = -726.0; // -1.0;
   public static final double intakingIntakeSpeed = 1500.0; // 10.0 / 12.0;
   public static final double launchingFeederSpeed = 725.0; // 9.0 / 12.0;
-  public static final double launchingLauncherSpeed = 4000.0; // 10.6 / 18.0;
+  public static final double launchingLauncherSpeed = 3000.0; // 10.6 / 18.0;
   public static final double launchingIntakeSpeed = 1500.0; // 10.0 / 12.0;
   public static final double spinUpFeederSpeed = -725.0; // -6.0 / 12.0;
   public static final double spinUpSeconds = 1.0;
